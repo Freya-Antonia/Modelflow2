@@ -2,12 +2,14 @@
 """
 Created on Mon Sep 02 19:41:11 2013
 
-This module creates model class instances. 
+This module creates model class instances.
 
 
 
 @author: Ib
 """
+
+#We should clean up libraries. So we know what is used where.
 
 import model_Excel as me
 from pathlib import Path
@@ -78,19 +80,20 @@ class BaseModel():
     """Class which defines a model from equations
 
 
-   In itself the BaseModel is of no use. 
-   
-   The **model** class enriches BaseModel with additional 
-   Mixin classes which has additional methods and properties. 
+   In itself the BaseModel is of no use.
 
-  
-   A model instance has a number of properties among which theese can be particular useful:
+   The **model** class enriches BaseModel with additional
+   Mixin classes which has additional methods and properties.
 
-       :allvar: Information regarding all variables 
+
+   A model instance has a number of properties among which these can be particular useful:
+
+       :allvar: Information regarding all variables
        :basedf: A dataframe with first result created with this model instance
-       :lastdf: A dataframe with the last result created with this model instance 
+       :lastdf: A dataframe with the last result created with this model instance
 
-   The two result dataframes are used for comparision and visualisation. The user can set both basedf and altdf.     
+   The two result dataframes are used for comparision and visualisation.
+   The user can set both basedf and lastdf.
 
     """
 
@@ -113,7 +116,7 @@ class BaseModel():
             self.tabcomplete = tabcomplete
             # set basedf to the previous run instead of the first run
             self.previousbase = previousbase
-            self.safeorder= safeorder 
+            self.safeorder= safeorder
             if not self.istopo or self.straight:
                 self.use_preorder = use_preorder    # if prolog is used in sim2d
             else:
@@ -129,22 +132,22 @@ class BaseModel():
         """
         Creates a model from macro Business logic language.
 
-        That is the model specification is first exploded. 
+        That is the model specification is first exploded.
 
         Args:
             :equations: The model
             :modelname: Name of the model. Defaults to 'testmodel'.
             :silent: Suppress messages. Defaults to False.
-            :straigth: Don't reorder the model. Defaults to False.
+            :straight: Don't reorder the model. Defaults to False.
             :funks: Functions incorporated in the model specification . Defaults to [].
             :params: For later use. Defaults to {}.
             :tabcomplete: Allow tab compleetion in editor, for large model time consuming. Defaults to True.
             :previousbase: Use previous run as basedf not the first. Defaults to False.
             :norm: Normalize the model. Defaults to True.
             :sym: If normalize do it symbolic. Defaults to False.
-            :sep: Seperate the equations. Defaults to newline '\n'.
+            :sep: Separate the equations. Defaults to newline '\n'.
 
-        :Returns:  A model instance: 
+        :Returns:  A model instance:
 
         """
 
@@ -157,7 +160,7 @@ class BaseModel():
         return mmodel
 
     def get_histmodel(self):
-        """ return a model instance with a model which generates historic values for equations 
+        """ returns a model instance with a model which generates historic values for equations
         marked by a frml name I or IDENT """
         hist_eq = mp.find_hist_model(self.equations)
         return type(self)(hist_eq, funks=self.funks)
@@ -165,30 +168,30 @@ class BaseModel():
     def analyzemodelnew(self, silent):
         ''' Analyze a model
 
-        The function creats:**Self.allvar** is a dictory with an entry for every variable in the model 
-        the key is the variable name. 
-        For each endogeneous variable there is a directory with thees keys:
+        The function creates:**Self.allvar** is a dictionary with an entry for every variable in the model
+        the key is the variable name.
+        For each endogenous variable there is a directory with thees keys:
 
         :maxlag: The max lag for this variable
         :maxlead: The max Lead for this variable
-        :endo: 1 if the variable is endogeneous (ie on the left hand side of =
-        :frml: String with the formular for this variable
-        :frmlnumber: The number of the formular 
-        :varnr: Number of this variable 
-        :terms: The frml for this variable translated to terms 
-        :frmlname: The frmlname for this variable 
-        :startnr: Start of this variable in gauss seidel solutio vector :Advanced:
+        :endo: 1 if the variable is endogenous (ie on the left hand side of =
+        :frml: String with the formula for this variable
+        :frmlnumber: The number of the formula
+        :varnr: Number of this variable
+        :terms: The frml for this variable translated to terms
+        :frmlname: The frmlname for this variable
+        :startnr: Start of this variable in gauss seidel solution vector :Advanced:
         :matrix: This lhs element is a matrix
-        :dropfrml: If this frml shoud be excluded from the evaluation.
+        :dropfrml: If this frml should be excluded from the evaluation.
 
 
-        In addition theese properties will be created: 
+        In addition theese properties will be created:
 
-        :endogene: Set of endogeneous variable in the model 
-        :exogene: Se exogeneous variable in the model 
-        :maxnavlen: The longest variable name 
-        :blank: An emty string which can contain the longest variable name 
-        :solveorder: The order in which the model is solved - initaly the order of the equations in the model 
+        :endogene: Set of endogenous variable in the model
+        :exogene: Se exogenous variable in the model
+        :maxnavlen: The longest variable name
+        :blank: An empty string which can contain the longest variable name
+        :solveorder: The order in which the model is solved - initially the order of the equations in the model
 
         '''
         gc.disable()
@@ -337,7 +340,7 @@ class BaseModel():
     @contextmanager
     def set_smpl(self, start='', slut='', df=None):
         """
-        Sets the scope for the models time range, and restors it afterward 
+        Sets the scope for the models time range, and restors it afterward
 
         Args:
             start : Start time. Defaults to ''.
@@ -374,35 +377,35 @@ class BaseModel():
          """
          temporary place basedf,lastdf in keep_solutions
          if scenarios contains * or ? they are separated by | else space
-    
-    
+
+
          """
          from copy import deepcopy
          # old_keep_solutions = {k:v.copy() for k,v in self.keep_solutions.items() }
          old_keep_solutions = self.keep_solutions
-         
-         if switch: 
+
+         if switch:
              basename = self.basename if hasattr(self, 'basename') else 'Baseline solution'
              lastname = self.lastname if hasattr(self, 'lastname') else 'Last solution'
              self.keep_solutions = {basename:self.basedf.copy() , lastname:self.lastdf.copy()}
-         
+
          scenariolist = [k for k in self.keep_solutions.keys()]
          if scenarios == '*':
              selected = scenariolist
          else:
-             sep= ' ' if '*' in scenarios or '?' in scenarios else '|' 
+             sep= ' ' if '*' in scenarios or '?' in scenarios else '|'
              selected = [v for  up in scenarios.split(sep) for v in sorted(fnmatch.filter(scenariolist, up))]
          # print(f'{selected=}')
          # print(f'{scenariolist=}')
-         
+
          if len(selected):
              self.keep_solutions = {v:self.keep_solutions[v] for  v in selected}
-         else: 
+         else:
              print('No scenarios match the scenarios you try')
              self.keep_solutions = old_keep_solutions
-         
+
          yield
-                     
+
          self.keep_solutions = old_keep_solutions
 
 
@@ -417,7 +420,7 @@ class BaseModel():
 
             rhss = ((var, term[self.allvar[var]['assigpos']:])
                     for var, term in terms)
-            if self.safeorder: 
+            if self.safeorder:
                 rhsvar = ((var, {v.var for v in rhs if v.var and v.var in self.endogene and v.var !=
                            var                }) for var, rhs in rhss)
             else:
@@ -440,7 +443,7 @@ class BaseModel():
             all = sum((n[1] for n in res))
             self._calculate_freq = res+[('Total', all)]
         return self._calculate_freq
-    
+
     @cached_property
     def flop_get(self):
         ''' The number of operators in the model prolog,core and epilog'''
@@ -450,7 +453,7 @@ class BaseModel():
             'epilog':self.calculate_freq_list(self.epiorder)
             }
         return res
-    
+
     def calculate_freq_list(self,varlist):
             operators = (t.op for v in varlist for t in self.allvar[v]['terms'] if (
                 not self.allvar[v]['dropfrml']) and t.op and t.op not in '$,()=[]')
@@ -459,8 +462,8 @@ class BaseModel():
             calculate_freq = res+[('Total', all)]
             return calculate_freq
 
-        
-    
+
+
     def get_columnsnr(self, df):
         ''' returns a dict a databanks variables as keys and column number as item
         used for fast getting and setting of variable values in the dataframe'''
@@ -469,7 +472,7 @@ class BaseModel():
     def outeval(self, databank):
         ''' takes a list of terms and translates to a evaluater function called los
 
-        The model axcess the data through:Dataframe.value[rowindex+lag,coloumnindex] which is very efficient 
+        The model axcess the data through:Dataframe.value[rowindex+lag,coloumnindex] which is very efficient
 
         '''
         short, long, longer = 4*' ', 8*' ', 12 * ' '
@@ -535,15 +538,15 @@ class BaseModel():
             return all(a == b)
 
     def xgenr(self, databank, start='', slut='', silent=0, samedata=1, **kwargs):
-        '''Evaluates this model on a databank from start to slut (means end in Danish). 
+        '''Evaluates this model on a databank from start to slut (means end in Danish).
 
-        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function 
-        (:func:`modelclass.model.fouteval`) 
+        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function
+        (:func:`modelclass.model.fouteval`)
         then it evaluates the function and returns the values to a the Dataframe in the databank.
 
-        The text for the evaluater function is placed in the model property **make_los_text** 
-        where it can be inspected 
-        in case of problems.         
+        The text for the evaluater function is placed in the model property **make_los_text**
+        where it can be inspected
+        in case of problems.
 
         '''
 
@@ -576,7 +579,7 @@ class BaseModel():
         return outdf
 
     def findpos(self):
-        ''' find a startposition in the calculation array for a model 
+        ''' find a startposition in the calculation array for a model
         places startposition for each variable in model.allvar[variable]['startpos']
         places the max startposition in model.maxstart '''
 
@@ -590,10 +593,10 @@ class BaseModel():
             self.maxstart = start
 
     def make_gaussline(self, vx, nodamp=False):
-        ''' takes a list of terms and translates to a line in a gauss-seidel solver for 
+        ''' takes a list of terms and translates to a line in a gauss-seidel solver for
         simultanius models
-        the variables are mapped to position in a vector which has all relevant varaibles lagged 
-        this is in order to provide opertunity to optimise data and solving 
+        the variables are mapped to position in a vector which has all relevant varaibles lagged
+        this is in order to provide opertunity to optimise data and solving
 
         New version to take hand of several lhs variables. Dampning is not allowed for
         this. But can easely be implemented by makeing a function to multiply tupels
@@ -652,7 +655,7 @@ class BaseModel():
         return res
 
     def createstuff3(self, dfxx):
-        ''' Connect a dataframe with the solution vector used by the iterative sim2 solver) 
+        ''' Connect a dataframe with the solution vector used by the iterative sim2 solver)
         return a function to place data in solution vector and to retrieve it again. '''
 
         columsnr = {v: i for i, v in enumerate(dfxx.columns)}
@@ -666,7 +669,7 @@ class BaseModel():
         posstartendo = [self.allvar[var]['startnr'] for var in self.endogene]
 
         def stuff3(values, row, ljit=False):
-            '''Fills  a calculating vector with data, 
+            '''Fills  a calculating vector with data,
             speeded up by using dataframe.values '''
 
             if ljit:
@@ -688,12 +691,12 @@ class BaseModel():
         return stuff3, saveeval3
 
     def outsolve(self, order='', exclude=[]):
-        ''' returns a string with a function which calculates a 
+        ''' returns a string with a function which calculates a
         Gauss-Seidle iteration of a model
-        exclude is list of endogeneous variables not to be solved 
-        uses: 
+        exclude is list of endogeneous variables not to be solved
+        uses:
         model.solveorder the order in which the variables is calculated
-        model.allvar[v]["gauss"] the ccalculation 
+        model.allvar[v]["gauss"] the ccalculation
         '''
         short, long, longer = 4*' ', 8*' ', 12 * ' '
         solveorder = order if order else self.solveorder
@@ -716,8 +719,8 @@ class BaseModel():
     def make_solver(self, ljit=False, order='', exclude=[], cache=False):
         ''' makes a function which performs a Gaus-Seidle iteration
         if ljit=True a Jittet function will also be created.
-        The functions will be placed in: 
-        model.solve 
+        The functions will be placed in:
+        model.solve
         model.solve_jit '''
 
         a = self.outsolve(order, exclude)  # find the text of the solve
@@ -739,25 +742,25 @@ class BaseModel():
 
         The default options are resonable for most use:
 
-        :start,slut: Start and end of simulation, default as much as possible taking max lag into acount  
+        :start,slut: Start and end of simulation, default as much as possible taking max lag into acount
         :max_iterations : Max interations
         :first_test: First iteration where convergence is tested
-        :ljit: If True Numba is used to compile just in time - takes time but speeds solving up 
+        :ljit: If True Numba is used to compile just in time - takes time but speeds solving up
         :new: Force creation a new version of the solver (for testing)
         :exclude: Don't use use theese foormulas
-        :silent: Suppres solving informations 
-        :conv: Variables on which to measure if convergence has been achived 
-        :samedata: If False force a remap of datatrframe to solving vector (for testing) 
-        :dumpvar: Variables to dump 
-        :ldumpvar: toggels dumping of dumpvar 
+        :silent: Suppres solving informations
+        :conv: Variables on which to measure if convergence has been achived
+        :samedata: If False force a remap of datatrframe to solving vector (for testing)
+        :dumpvar: Variables to dump
+        :ldumpvar: toggels dumping of dumpvar
         :dumpwith: with of dumps
-        :dumpdecimal: decimals in dumps 
+        :dumpdecimal: decimals in dumps
         :lcython: Use Cython to compile the model (experimental )
         :alfa: Dampning of formulas marked for dampning (<Z> in frml name)
         :sim: For later use
-        :absconv: Treshold for applying relconv to test convergence 
-        :relconv: Test for convergence 
-        :debug:  Output debug information 
+        :absconv: Treshold for applying relconv to test convergence
+        :relconv: Test for convergence
+        :debug:  Output debug information
         :stats:  Output solving statistics
 
 
@@ -866,10 +869,10 @@ class BaseModel():
         return outdf
 
     def outres(self, order='', exclude=[]):
-        ''' returns a string with a function which calculates a 
-        calculation for residual check 
-        exclude is list of endogeneous variables not to be solved 
-        uses: 
+        ''' returns a string with a function which calculates a
+        calculation for residual check
+        exclude is list of endogeneous variables not to be solved
+        uses:
         model.solveorder the order in which the variables is calculated
         '''
         short, long, longer = 4*' ', 8*' ', 12 * ' '
@@ -895,8 +898,8 @@ class BaseModel():
     def make_res(self, order='', exclude=[]):
         ''' makes a function which performs a Gaus-Seidle iteration
         if ljit=True a Jittet function will also be created.
-        The functions will be placed in: 
-        model.solve 
+        The functions will be placed in:
+        model.solve
         model.solve_jit '''
 
         xxx = self.outres(order, exclude)  # find the text of the solve
@@ -953,8 +956,8 @@ class BaseModel():
 class Org_model_Mixin():
     ''' The model class, used for calculating models
 
-    Compared to BaseModel it allows for simultaneous model and contains a number of properties 
-    and functions to analyze and manipulate models and visualize results.  
+    Compared to BaseModel it allows for simultaneous model and contains a number of properties
+    and functions to analyze and manipulate models and visualize results.
 
     '''
 
@@ -1015,7 +1018,7 @@ class Org_model_Mixin():
 
     def exodif(self, a=None, b=None):
         ''' Finds the differences between two dataframes in exogeneous variables for the model
-        Defaults to getting the two dataframes (basedf and lastdf) internal to the model instance 
+        Defaults to getting the two dataframes (basedf and lastdf) internal to the model instance
 
         Exogeneous with a name ending in <endo>__RES are not taken in, as they are part of a un_normalized model'''
         aexo = a.loc[:, self.exogene_true] if isinstance(
@@ -1028,10 +1031,10 @@ class Org_model_Mixin():
         return out2.T.sort_index(axis=0).T
 
     def get_eq_values(self, varnavn, last=True, databank=None, nolag=False, per=None, showvar=False, alsoendo=False):
-        ''' Returns a dataframe with values from a frml determining a variable 
+        ''' Returns a dataframe with values from a frml determining a variable
 
 
-         options: 
+         options:
              :last:  the lastdf is used else baseline dataframe
              :nolag:  only line for each variable '''
 
@@ -1060,7 +1063,7 @@ class Org_model_Mixin():
                           for p in current_per] for v, lag in sterms]
             except:
                 breakpoint()
-                
+
             out = pd.DataFrame(lines, columns=current_per,
                                index=[r[0]+(f'({str(r[1])})' if r[1] else '') for r in sterms])
             return out
@@ -1077,7 +1080,7 @@ class Org_model_Mixin():
         else:
             out = out0
         return out
-    
+
     def get_var_growth(self,varname,showname= False,diff=False):
         '''Returns the  growth rate of this variable in the base and the last dataframe'''
         with self.set_smpl_relative(-1, 0):
@@ -1085,11 +1088,11 @@ class Org_model_Mixin():
             basevalues.name = f'{varname+" " if showname else ""}Base growth'
             lastvalues = self.lastdf.loc[self.current_per, varname].pct_change()
             lastvalues.name = f'{varname +" " if showname else ""}Last growth'
-            diffvalues = lastvalues-basevalues 
+            diffvalues = lastvalues-basevalues
             diffvalues.name = f'{varname +" " if showname else ""}Diff growth'
-        out = pd.DataFrame([basevalues,lastvalues,diffvalues]) if diff else pd.DataFrame([basevalues,lastvalues])  
+        out = pd.DataFrame([basevalues,lastvalues,diffvalues]) if diff else pd.DataFrame([basevalues,lastvalues])
         return out.loc[:,self.current_per]*100.
-    
+
     def get_values(self, v, pct=False):
         ''' returns a dataframe with the data points for a node,  including lags '''
         t = pt.udtryk_parse(v, funks=[])
@@ -1173,7 +1176,7 @@ class Model_help_Mixin():
         '''
         A timer context manager, implemented using a
         generator function. This one will report time even if an exception occurs
-        the time in seconds can be retrieved by <retunr value>.seconds """    
+        the time in seconds can be retrieved by <retunr value>.seconds """
 
         Parameters
         ----------
@@ -1271,9 +1274,9 @@ class Model_help_Mixin():
 
     def insertModelVar(self, dataframe, addmodel=[]):
         """Inserts all variables from this model, not already in the dataframe.
-        If model is specified, the dataframw will contain all variables from this and model models.  
+        If model is specified, the dataframw will contain all variables from this and model models.
 
-        also located at the module level for backward compability 
+        also located at the module level for backward compability
 
         """
         if isinstance(addmodel, list):
@@ -1314,11 +1317,11 @@ class Model_help_Mixin():
 
     def test_model(self, base_input, start=None, end=None, maxvar=1_000_000, maxerr=100, tol=0.0001, showall=False, dec=8, width=30, ref_df=None):
         '''
-        Compares a straight calculation with the input dataframe. 
+        Compares a straight calculation with the input dataframe.
 
-        shows which variables dont have the same value 
+        shows which variables dont have the same value
 
-        Very useful when implementing a model where the results are known 
+        Very useful when implementing a model where the results are known
 
         Args:
             df (DataFrame): dataframe to run.
@@ -1328,7 +1331,7 @@ class Model_help_Mixin():
             maxerr (int, optional): how many errors to check Defaults to 100.
             tol (float, optional): check for absolute value of difference. Defaults to 0.0001.
             showall (bolean, optional): show more . Defaults to False.
-            ref_df (DataFrame, optional): this dataframe is used for reference, used if adjustment terms has been calculated 
+            ref_df (DataFrame, optional): this dataframe is used for reference, used if adjustment terms has been calculated
 
         Returns:
             None.
@@ -1402,7 +1405,7 @@ class Dekomp_Mixin():
             ...
             smallalt = altdf_.loc[:, vars].copy(deep=True)   # for speed
             smallbase = smallalt.shift().copy()  # for speed
-        else:    
+        else:
             smallalt = altdf_.loc[:, vars].copy(deep=True)   # for speed
             smallbase = basedf_.loc[:, vars].copy(deep=True)  # for speed
         # make a dataframe for each experiment
@@ -1428,11 +1431,11 @@ class Dekomp_Mixin():
     # the resulting dataframe
         multi = pd.MultiIndex.from_tuples([e[0] for e in eksperiments], names=[
                                           'Variable', 'lag']).drop_duplicates()
-        
+
         resdf = pd.DataFrame(index=multi, columns=print_per)
         for e in eksperiments:
             resdf.at[e[0], e[1]] = res[e]
-            
+
         res_growthdf = pd.DataFrame(index=multi, columns=print_per)
         for e in eksperiments:
             res_growthdf.at[e[0], e[1]] = res_growth[e]
@@ -1464,7 +1467,7 @@ class Dekomp_Mixin():
             print('\n Share of contributions to differende for ', varnavn)
             print(pctendo.to_string(
                 float_format=lambda x: '{0:10.0f}%'.format(x)))
-            
+
             print('\n Contribution to growth rate', varnavn)
             print(res_growthdf.to_string(
                 float_format=lambda x: '{0:10.1f}%'.format(x)))
@@ -1488,7 +1491,7 @@ class Dekomp_Mixin():
                          ,rename=True
                          ,time_att=False):
         '''
-        Returns  a waterfall diagram with attribution for a variable in one time frame 
+        Returns  a waterfall diagram with attribution for a variable in one time frame
 
         Parameters
         ----------
@@ -1552,7 +1555,7 @@ class Dekomp_Mixin():
         '''Get the  attribution for a singel variable'''
         outdf = self.get_att_pct(to_var.upper(),lag=lag,filter=False,time_att=time_att)
         # print(f'{to_var=} {from_var=} {outdf.loc[from_var.upper(),:].abs().max()}')
-        
+
         return outdf.loc[from_var.upper(),:]
 
     def get_att_level(self, n, filter=False, lag=True, start='', end='',time_att=False):
@@ -1560,7 +1563,7 @@ class Dekomp_Mixin():
          I little effort to change from multiindex to single node name'''
         tstart = self.current_per[0] if start =='' else start
         tend   = self.current_per[-1] if end =='' else end
-         
+
         res = self.dekomp(n, lprint=0, start=tstart, end=tend,time_att=time_att)
         res_level = res[1].iloc[:, :]
         if lag:
@@ -1573,11 +1576,11 @@ class Dekomp_Mixin():
         return out
 
     def dekomp_plot(self, varnavn, sort=True, pct=True, per='', top=0.9, threshold=0.0,lag=True
-                    ,rename=True 
+                    ,rename=True
                     ,time_att=False):
 
         '''
-        Returns  a chart with attribution for a variable over the smpl  
+        Returns  a chart with attribution for a variable over the smpl
 
         Parameters
         ----------
@@ -1596,17 +1599,17 @@ class Dekomp_Mixin():
         time_att : TYPE, optional
             Do time attribution . The default is False.
         lag : TYPE, optional
-           separete by lags The default is True.           
+           separete by lags The default is True.
         top : TYPE, optional
-          where to place the title 
-           
+          where to place the title
+
 
         Returns
         -------
         a matplotlib figure instance .
 
         '''
-        
+
         # xx = self.dekomp(varnavn,self.current_per[0],self.current_per[-1],lprint=False)
         # # breakpoint()
         # ddf0 = join_name_lag(xx[2] if pct else xx[1]).pipe(
@@ -1623,7 +1626,7 @@ class Dekomp_Mixin():
                            rotation=45, fontsize='x-large')
         nthreshold = '' if threshold == 0.0 else f', threshold = {threshold}'
 
-        ntitle = f'Attribution{nthreshold}' 
+        ntitle = f'Attribution{nthreshold}'
         fig.suptitle(ntitle, fontsize=20)
         fig.subplots_adjust(top=top)
 
@@ -1659,7 +1662,7 @@ class Dekomp_Mixin():
         return fig
 
     def get_att_gui(self, var='FY', spat='*', desdic={}, use='level'):
-        '''Creates a jupyter ipywidget to display model level 
+        '''Creates a jupyter ipywidget to display model level
         attributions '''
         if not hasattr(self, 'totdekomp'):
             from modeldekom import totdif
@@ -1725,7 +1728,7 @@ class Modify_Mixin():
 
     def eqflip(self,flip=None,calc_add=True,newname='',sep='\n'):
         '''
-        
+
 
         Parameters
         ----------
@@ -1744,10 +1747,10 @@ class Modify_Mixin():
             a dataframe with calculated add factors. Origin is the original models lastdf.
 
         '''
-        
-        newmodelname = newname if newname else self.name+' flipped'      
-        updatefunks=self.funks # 
-        # breakpoint() 
+
+        newmodelname = newname if newname else self.name+' flipped'
+        updatefunks=self.funks #
+        # breakpoint()
         lines = flip.strip().split(sep)
         newnormalisation = [l.split() for l in lines]
         vars_before_normalization = {beforeendo.upper() for  beforeendo,afterendo in newnormalisation  }
@@ -1755,11 +1758,11 @@ class Modify_Mixin():
         frml_normalize_gross = {(beforeendo,afterendo) : (fname ,normal(expression,the_endo = afterendo,endo_lhs=False,add_adjust=False))  for (beforeendo,afterendo),(frml,fname,expression)  in frml_normalize_strip.items() }
         frmldict_normalized = {afterendo : f'FRML {fname} {nexpression.normalized}$'
                                for (beforeendo,afterendo),(fname,nexpression)  in frml_normalize_gross.items() }
-#        breakpoint() 
-            
-        frmldict    = {k: v['frml'] for (k,v) in self.allvar.items() if k in self.endogene and not k in vars_before_normalization } # frml's in the existing model 
-        newfrmldict = {**frmldict,**frmldict_normalized} # frml's in the new model 
-            
+#        breakpoint()
+
+        frmldict    = {k: v['frml'] for (k,v) in self.allvar.items() if k in self.endogene and not k in vars_before_normalization } # frml's in the existing model
+        newfrmldict = {**frmldict,**frmldict_normalized} # frml's in the new model
+
         newfrml     = '\n'.join([f for f in newfrmldict.values()])
         newmodel    =  self.__class__(newfrml,modelname = f'updated {self.name}',funks=updatefunks)
         print(f'\nThe model:"{self.name}" Has endogeneous variable flipped, new model name is:"{newmodelname}"')
@@ -1772,14 +1775,14 @@ class Modify_Mixin():
         newdf = self.lastdf.copy()
         newmodel.current_per = self.current_per.copy()
         newmodel.var_description = self.var_description
-        newmodel.name = newmodelname 
-        return newmodel,newdf 
-        ... 
+        newmodel.name = newmodelname
+        return newmodel,newdf
+        ...
 
 
     def eqdelete(self,deleteeq=None,newname=''):
         '''
-        
+
 
         Parameters
         ----------
@@ -1794,13 +1797,13 @@ class Modify_Mixin():
             a dataframe with calculated add factors. Origin is the original models lastdf.
 
         '''
-        
+
         vars_todelete = self.vlist(deleteeq)
-        newmodelname = newname if newname else self.name+' with deleted eq'      
-            
-            
-        newfrmldict    = {k: v['frml'] for (k,v) in self.allvar.items() if k in self.endogene and not k in vars_todelete} # frml's in the existing model 
-            
+        newmodelname = newname if newname else self.name+' with deleted eq'
+
+
+        newfrmldict    = {k: v['frml'] for (k,v) in self.allvar.items() if k in self.endogene and not k in vars_todelete} # frml's in the existing model
+
         newfrml     = '\n'.join([f for f in newfrmldict.values()])
         newmodel    =  self.__class__(newfrml,modelname = f'updated {self.name}',funks=self.funks)
         print(f'\nThe model:"{self.name}" Has equations deleted, new model name is:"{newmodelname}"')
@@ -1809,28 +1812,28 @@ class Modify_Mixin():
         for v in vars_todelete:
             if v in self.endogene:
                 print(f'{v}  :deleted ')
-            else: 
+            else:
                 print(f'{v}  :  is exogenous and not deleted ')
-                
-  
+
+
         newdf = self.lastdf.copy()
-            
+
         newmodel.current_per = self.current_per.copy()
         newmodel.var_description = self.var_description
-        newmodel.name = newmodelname 
+        newmodel.name = newmodelname
 
-        return newmodel,newdf 
-        ... 
+        return newmodel,newdf
+        ...
 
-        
+
     def equpdate(self,updateeq=None,newfunks=[],add_adjust=False,calc_add=True,do_preprocess=True,newname=''):
         '''
-        
+
 
         Parameters
         ----------
         updateeq : TYPE
-            new equations seperated by newline . 
+            new equations seperated by newline .
         newfunks : TYPE, optional
             Additional userspecified functions. The default is [].
         calc_add : bool, optional
@@ -1844,47 +1847,47 @@ class Modify_Mixin():
             a dataframe with calculated add factors. Origin is the original models lastdf.
 
         '''
-        
-            
-        updatefunks=list(set(self.funks+newfunks) ) # 
-        
-        newmodelname = newname if newname else self.name+' Updated'      
-    
-        dfvars = set(self.lastdf.columns)    
-    
-        updatemodel = mp.tofrml(updateeq)   # create the moedl with the usual processing of frml's 
+
+
+        updatefunks=list(set(self.funks+newfunks) ) #
+
+        newmodelname = newname if newname else self.name+' Updated'
+
+        dfvars = set(self.lastdf.columns)
+
+        updatemodel = mp.tofrml(updateeq)   # create the moedl with the usual processing of frml's
         while '  ' in updatemodel:
             updatemodel = updatemodel.replace('  ', ' ')
-        frml2   = updatemodel.split('$') 
+        frml2   = updatemodel.split('$')
         frml2_strip = [mp.split_frml(f+'$') for f in frml2 if len(f)>2]
         # breakpoint()
-        frml2_normal = [[frml,fname, 
+        frml2_normal = [[frml,fname,
                          normal(expression[:-1],do_preprocess=do_preprocess,add_adjust=add_adjust,
                                 exo_adjust=pt.kw_frml_name(fname.upper(),'EXO'))]
-                           for allfrml,frml,fname,expression in frml2_strip] 
-        frmldict_update = {nexpression.endo_var: f'{frml} {fname} {nexpression.normalized}$' for 
-                           frml,fname,nexpression in frml2_normal} 
-        
-        
+                           for allfrml,frml,fname,expression in frml2_strip]
+        frmldict_update = {nexpression.endo_var: f'{frml} {fname} {nexpression.normalized}$' for
+                           frml,fname,nexpression in frml2_normal}
+
+
         if add_adjust:
-            frmldict_calc_add = {nexpression.endovar: f'{frml} {fname} {nexpression.calc_adjustment}$' for 
-                    frml,fname,nexpression in frml2_normal if nexpression.endovar in self.endogene|self.exogene|dfvars } 
-        else: 
+            frmldict_calc_add = {nexpression.endovar: f'{frml} {fname} {nexpression.calc_adjustment}$' for
+                    frml,fname,nexpression in frml2_normal if nexpression.endovar in self.endogene|self.exogene|dfvars }
+        else:
             frmldict_calc_add={}
         # breakpoint()
-            
-        frmldict    = {k: v['frml'] for (k,v) in self.allvar.items() if k in self.endogene } # frml's in the existing model 
-        newfrmldict = {**frmldict,**frmldict_update} # frml's in the new model 
-            
+
+        frmldict    = {k: v['frml'] for (k,v) in self.allvar.items() if k in self.endogene } # frml's in the existing model
+        newfrmldict = {**frmldict,**frmldict_update} # frml's in the new model
+
         newfrml     = '\n'.join([f for f in newfrmldict.values()])
         newmodel    =  self.__class__(newfrml,modelname = f'updated {self.name}',funks=updatefunks)
-        
-        if len(frmldict_calc_add) and add_adjust:          
+
+        if len(frmldict_calc_add) and add_adjust:
 
             calc_add_frml = '\n'.join([f for f in frmldict_calc_add.values()])
             calc_add_model = self.__class__(calc_add_frml,modelname = f'adjustment calculation for updated {self.name}',funks=updatefunks)
             var_add = calc_add_model.endogene
-            
+
         print(f'\nThe model:"{self.name}" got new equations, new model name is:"{newmodelname}"')
         for varname,frml  in frmldict_update.items():
             print(f'New equation for For {varname}')
@@ -1895,33 +1898,33 @@ class Modify_Mixin():
             print(f'Adjust calc:{frmldict_calc_add.get(varname,"No frml for adjustment calc  ")}')
             print()
         # breakpoint()
-        
+
         thisdf = newmodel.insertModelVar(self.lastdf)
-        
-        
+
+
         if len(frmldict_calc_add and calc_add):
             calc_add_model.current_per = self.current_per
             newdf = calc_add_model(thisdf)
             print('\nNew add factors to get the same results for existing variables:')
             print(newdf.loc[self.current_per,var_add])
-        else: 
+        else:
             newdf = thisdf
-            
+
         newmodel.current_per = self.current_per.copy()
         newmodel.var_description = self.var_description
-        newmodel.name = newmodelname 
+        newmodel.name = newmodelname
 
-        return newmodel,newdf 
-        ... 
-        
+        return newmodel,newdf
+        ...
+
     def equpdate_old(self,updateeq=None,newfunks=[],add_adjust=False,calc_add=True,do_preprocess=True,newname=''):
         '''
-        
+
 
         Parameters
         ----------
         updateeq : TYPE
-            new equations seperated by newline . 
+            new equations seperated by newline .
         newfunks : TYPE, optional
             Additional userspecified functions. The default is [].
         calc_add : bool, optional
@@ -1935,42 +1938,42 @@ class Modify_Mixin():
             a dataframe with calculated add factors. Origin is the original models lastdf.
 
         '''
-        
-            
-        updatefunks=list(set(self.funks+newfunks) ) # 
-        
-        newmodelname = newname if newname else self.name+' Updated'      
-    
-        dfvars = set(self.lastdf.columns)    
-    
-        updatemodel = self.__class__.from_eq(updateeq,funks=updatefunks)   # create the moedl with the usual processing of frml's 
-        frmldict2   = {k: v['frml'] for (k,v) in updatemodel.allvar.items() if k in updatemodel.endogene} # A dict with the frml's of the modify 
 
-        frmldic2_strip = {k : v.replace('$','').split(' ',2) for k,v in frmldict2.items() } # {endovariabbe :  [FRML, FRMLNAME, EXPRESSION]...} 
+
+        updatefunks=list(set(self.funks+newfunks) ) #
+
+        newmodelname = newname if newname else self.name+' Updated'
+
+        dfvars = set(self.lastdf.columns)
+
+        updatemodel = self.__class__.from_eq(updateeq,funks=updatefunks)   # create the moedl with the usual processing of frml's
+        frmldict2   = {k: v['frml'] for (k,v) in updatemodel.allvar.items() if k in updatemodel.endogene} # A dict with the frml's of the modify
+
+        frmldic2_strip = {k : v.replace('$','').split(' ',2) for k,v in frmldict2.items() } # {endovariabbe :  [FRML, FRMLNAME, EXPRESSION]...}
         frmldic2_normal = {k : [frml,fname,normal(expression,do_preprocess=do_preprocess,
-                                                  add_adjust=add_adjust)] for k,(frml,fname,expression) 
-                           in frmldic2_strip.items()} 
-        frmldict_update = {k: f'{frml} {fname} {nexpression.normalized}$' for k,(frml,fname,nexpression) 
-                           in frmldic2_normal.items()} 
+                                                  add_adjust=add_adjust)] for k,(frml,fname,expression)
+                           in frmldic2_strip.items()}
+        frmldict_update = {k: f'{frml} {fname} {nexpression.normalized}$' for k,(frml,fname,nexpression)
+                           in frmldic2_normal.items()}
         if add_adjust:
-            frmldict_calc_add = {k: f'{frml} {fname} {nexpression.calc_adjustment}$' for k,(frml,fname,nexpression) 
-                           in frmldic2_normal.items() if k in self.endogene|self.exogene|dfvars } 
-        else: 
+            frmldict_calc_add = {k: f'{frml} {fname} {nexpression.calc_adjustment}$' for k,(frml,fname,nexpression)
+                           in frmldic2_normal.items() if k in self.endogene|self.exogene|dfvars }
+        else:
             frmldict_calc_add={}
         # breakpoint()
-            
-        frmldict    = {k: v['frml'] for (k,v) in self.allvar.items() if k in self.endogene } # frml's in the existing model 
-        newfrmldict = {**frmldict,**frmldict_update} # frml's in the new model 
-            
+
+        frmldict    = {k: v['frml'] for (k,v) in self.allvar.items() if k in self.endogene } # frml's in the existing model
+        newfrmldict = {**frmldict,**frmldict_update} # frml's in the new model
+
         newfrml     = '\n'.join([f for f in newfrmldict.values()])
         newmodel    =  self.__class__(newfrml,modelname = f'updated {self.name}',funks=updatefunks)
-        
-        if len(frmldict_calc_add) and add_adjust:          
+
+        if len(frmldict_calc_add) and add_adjust:
 
             calc_add_frml = '\n'.join([f for f in frmldict_calc_add.values()])
             calc_add_model = self.__class__(calc_add_frml,modelname = f'adjustment calculation for updated {self.name}',funks=updatefunks)
             var_add = calc_add_model.endogene
-            
+
         print(f'\nThe model:"{self.name}" got new equations, new model name is:"{newmodelname}"')
         for varname,frml  in frmldict_update.items():
             print(f'New equation for For {varname}')
@@ -1981,34 +1984,34 @@ class Modify_Mixin():
             print(f'Adjust calc:{frmldict_calc_add.get(varname,"No frml for adjustment calc  ")}')
             print()
         # breakpoint()
-        
+
         thisdf = newmodel.insertModelVar(self.lastdf)
-        
-        
+
+
         if len(frmldict_calc_add and calc_add):
             calc_add_model.current_per = self.current_per
             newdf = calc_add_model(thisdf)
             print('\nNew add factors to get the same results for existing variables:')
             print(newdf.loc[self.current_per,var_add])
-        else: 
+        else:
             newdf = thisdf
-            
+
         newmodel.current_per = self.current_per.copy()
         newmodel.var_description = self.var_description
-        newmodel.name = newmodelname 
+        newmodel.name = newmodelname
 
-        return newmodel,newdf 
-        ... 
-        
-            
-    
+        return newmodel,newdf
+        ...
+
+
+
 class Graph_Mixin():
     '''This class defines graph related methods and properties
     '''
 
     @staticmethod
     def create_strong_network(g, name='Network', typeout=False, show=False):
-        ''' create a solveorder and   blockordering of af graph 
+        ''' create a solveorder and   blockordering of af graph
         uses networkx to find the core of the model
         '''
         strong_condensed = nx.condensation(g)
@@ -2057,7 +2060,7 @@ class Graph_Mixin():
 
     @property
     def strongfrml(self):
-        ''' To search simultaneity (circularity) in a model 
+        ''' To search simultaneity (circularity) in a model
         this function returns the equations in each strong block
 
         '''
@@ -2110,7 +2113,7 @@ class Graph_Mixin():
 
     @property
     def prevar(self):
-        """ returns a set with names of endogenopus variables which do not depend 
+        """ returns a set with names of endogenopus variables which do not depend
         on current endogenous variables """
 
         if not hasattr(self, '_prevar'):
@@ -2119,7 +2122,7 @@ class Graph_Mixin():
 
     @property
     def epivar(self):
-        """ returns a set with names of endogenopus variables which do not influence 
+        """ returns a set with names of endogenopus variables which do not influence
         current endogenous variables """
 
         if not hasattr(self, '_epivar'):
@@ -2238,9 +2241,9 @@ class Graph_Mixin():
         return self._endograph_lag_lead
 
     def totgraph_get(self, onlyendo=False):
-        ''' The graph of all variables including and seperate lagged and leaded variable 
+        ''' The graph of all variables including and seperate lagged and leaded variable
 
-        onlyendo : only endogenous variables are part of the graph 
+        onlyendo : only endogenous variables are part of the graph
 
         '''
 
@@ -2280,7 +2283,7 @@ class Graph_Mixin():
         return totgraph
 
     def graph_remove(self, paralist):
-        ''' Removes a list of variables from the totgraph and totgraph_nolag 
+        ''' Removes a list of variables from the totgraph and totgraph_nolag
         mostly used to remove parmeters from the graph, makes it less crowded'''
 
         if not hasattr(self, '_totgraph') or not hasattr(self, '_totgraph_nolag'):
@@ -2306,11 +2309,11 @@ class Graph_Draw_Mixin():
 
     def treewalk(self, g, navn, level=0, parent='Start', maxlevel=20, lpre=True):
         ''' Traverse the call tree from name, and returns a generator \n
-        to get a list just write: list(treewalk(...)) 
-        maxlevel determins the number of generations to back up 
+        to get a list just write: list(treewalk(...))
+        maxlevel determins the number of generations to back up
 
         lpre=0 we walk the dependent
-        lpre=1 we walk the precednc nodes  
+        lpre=1 we walk the precednc nodes
         '''
         if level <= maxlevel:
             if parent != 'Start':
@@ -2348,14 +2351,14 @@ class Graph_Draw_Mixin():
                                         self._superstrongblock, self._superstrongtype, size=size, title=title)
         return fig
 
-    
+
     def draw(self, navn, down=1, up=1, lag=False, endo=False, filter=0, **kwargs):
         '''draws a graph of dependensies of navn up to maxlevel
 
-        :lag: show the complete graph including lagged variables else only variables. 
-        :endo: Show only the graph for current endogenous variables 
+        :lag: show the complete graph including lagged variables else only variables.
+        :endo: Show only the graph for current endogenous variables
         :down: level downstream
-        :up: level upstream 
+        :up: level upstream
 
 
         '''
@@ -2406,20 +2409,20 @@ class Graph_Draw_Mixin():
 
     def upwalk(self, g, navn, level=0, parent='Start', maxlevel=20, filter=0.0, lpre=True):
          ''' Traverse the call tree from name, and returns a generator \n
-         to get a list just write: list(upwalk(...)) 
+         to get a list just write: list(upwalk(...))
          maxlevel determins the number
-         of generations to back maxlevel 
-    
+         of generations to back maxlevel
+
          '''
          if filter:
             if level <= maxlevel:
                 # print(level,parent,navn)
                 # print(f'upwalk {level=} {parent=} {navn=}')
-       
+
                 if parent != 'Start':
                     # print(f'Look at  {parent=}  {navn=}' )
                     try:
-                         if ((self.get_att_pct_to_from(parent,navn) if lpre 
+                         if ((self.get_att_pct_to_from(parent,navn) if lpre
                              else self.get_att_pct_to_from(navn,parent)).abs() >= filter).any():
                            # print(f'yield {parent=}  {navn=}' )
                                 yield node(level, parent, navn)
@@ -2430,14 +2433,14 @@ class Graph_Draw_Mixin():
                 for child in (g.predecessors(navn) if lpre else g[navn]):
                         # breakpoint()
                         try:
-                            if ((self.get_att_pct_to_from(navn,child) if lpre 
+                            if ((self.get_att_pct_to_from(navn,child) if lpre
                                 else self.get_att_pct_to_from(child,navn)).abs() >= filter).any():
                                     # print(f'yield from {child=} {navn=}')
                                     yield from self.upwalk(g, child, level + 1, navn, maxlevel, filter,lpre)
                         except:
                             yield from self.upwalk(g, child, level + 1, navn, maxlevel, filter,lpre)
                             pass
-  
+
          else:
             if level <= maxlevel:
                 if parent != 'Start':
@@ -2448,9 +2451,9 @@ class Graph_Draw_Mixin():
 
     def upwalk_old(self, g, navn, level=0, parent='Start', up=20, select=0.0, lpre=True):
      ''' Traverse the call tree from name, and returns a generator \n
-     to get a list just write: list(upwalk(...)) 
+     to get a list just write: list(upwalk(...))
      up determins the number
-     of generations to back up 
+     of generations to back up
 
      '''
      if select:
@@ -2472,7 +2475,7 @@ class Graph_Draw_Mixin():
                          # print(f'Yield upwalk {(level+1)=} {child=} {navn=}')
 
                          yield from self.upwalk(g, child, level + 1, navn, up, select,lpre)
-                     elif (g[navn][parent]['att'].abs() >= select).any(axis=1).any(): 
+                     elif (g[navn][parent]['att'].abs() >= select).any(axis=1).any():
                          # print(f'yield  {level=} {parent=} {navn=} ')
 
                          yield from self.upwalk(g, child, level + 1, navn, up, select,lpre)
@@ -2480,10 +2483,10 @@ class Graph_Draw_Mixin():
                          # print(f'UPS  {level=} {parent=} {navn=} ')
                          pass
                  except Exception as e:
-                    # breakpoint() 
+                    # breakpoint()
                     # print(f'Exception {e}')
                     # print('Problem ',level,parent,navn,'\n',g[navn][parent]['att'])
-                     
+
                     pass
      else:
          if level <= up:
@@ -2500,17 +2503,17 @@ class Graph_Draw_Mixin():
         Parameters:
         :var:  the variable we are looking at
         :up:  how far up the tree will we climb
-        :select: Only show the nodes which contributes 
-        :showatt: Show the explanation in pct 
-        :lag:  If true, show all lags, else aggregate lags for each variable. 
+        :select: Only show the nodes which contributes
+        :showatt: Show the explanation in pct
+        :lag:  If true, show all lags, else aggregate lags for each variable.
         :HR: if true make horisontal graph
-        :title: Title 
-        :saveas: Filename 
+        :title: Title
+        :saveas: Filename
         :pdf: open the pdf file
         :svg: display the svg file
-        :browser: if true open the svg file in browser 
-        :noshow: Only return the resulting graph 
-        :dot: Return the dot file only 
+        :browser: if true open the svg file in browser
+        :noshow: Only return the resulting graph
+        :dot: Return the dot file only
 
 
         '''
@@ -2571,8 +2574,8 @@ class Graph_Draw_Mixin():
         all is the edges
         attributex can be shown
 
-        :sink: variale to use as sink 
-        :svg: Display the svg image 
+        :sink: variale to use as sink
+        :svg: Display the svg image
 '''
         size = kwargs.get('size', (6, 6))
 
@@ -2674,7 +2677,7 @@ class Graph_Draw_Mixin():
 
     def maketip(self, v, html=False):
         '''
-        Return a tooltip for variable v. 
+        Return a tooltip for variable v.
 
         For use when generating .dot files for Graphviz
 
@@ -2694,29 +2697,29 @@ class Graph_Draw_Mixin():
         ''' makes a drawing of all edges in list alledges
         all is the edges
 
-        this can handle both attribution and plain 
+        this can handle both attribution and plain
 
         :all: show values for .dfbase and .lastdf
         :last: show the values for .lastdf
-        :growthshow: Show growthrates 
+        :growthshow: Show growthrates
         :attshow: Show attributiuons
         :filter: Prune tree branches where all(abs(attribution)<filter value)
-        :sink: variale to use as sink 
-        :source: variale to use as ssource 
+        :sink: variale to use as sink
+        :source: variale to use as ssource
         :svg: Display the svg image in browser
-        :pdf: display the pdf result in acrobat reader 
-        :saveas: Save the drawing as name 
+        :pdf: display the pdf result in acrobat reader
+        :saveas: Save the drawing as name
         :size: figure size default (6,6)
-        :warnings: warnings displayed in command console, default =False 
-        :invisible: set of invisible nodes 
-        :labels: dict of labels for edges 
+        :warnings: warnings displayed in command console, default =False
+        :invisible: set of invisible nodes
+        :labels: dict of labels for edges
         :transdic: dict of translations for consolidation of nodes {'SHOCK[_A-Z]*__J':'SHOCK__J','DEV__[_A-Z]*':'DEV'}
         :dec: decimal places in numbers
-        :HR: horisontal orientation default = False 
-        :des: inject variable descriptions 
+        :HR: horisontal orientation default = False
+        :des: inject variable descriptions
         :fokus: Variable to get special colour
-        :fokus2: Variable for which values are shown 
-        :fokus2all: Show values for all variables 
+        :fokus2: Variable for which values are shown
+        :fokus2all: Show values for all variables
 
 
 '''
@@ -2752,7 +2755,7 @@ class Graph_Draw_Mixin():
               else:
                   out = 'red'
               return out
-        
+
         def dftotable(df, dec=0):
             xx = '\n'.join([f"<TR {self.maketip(row[0],True)}><TD ALIGN='LEFT' {self.maketip(row[0],True)}>{row[0]}</TD>" +
                             ''.join(["<TD ALIGN='RIGHT'>"+(f'{b:{25},.{dec}f}'.strip()+'</TD>').strip()
@@ -2767,7 +2770,7 @@ class Graph_Draw_Mixin():
                 # return f'{max(1., min(8., self.get_att_pct_to_from(v.parent,v.child).abs().max()/10.)):.2}'
             except:
                 return '0.5'
-            
+
         def getpct(v):
             '''Define pennwidth based on explanation in the last period '''
             try:
@@ -2805,10 +2808,10 @@ class Graph_Draw_Mixin():
 
         labelsdic = kwargs.get('labels', {})
         labels = self.defsub(labelsdic)
-        
+
         if not len(alllinks):
             print(f'No graph {navn}')
-            return 
+            return
 
         maxlevel = max([l for l, p, c in alllinks])
 
@@ -2822,15 +2825,15 @@ class Graph_Draw_Mixin():
             except:
                 self.att_dic_leve ={}
                 self.att_dic={}
-                 
+
         ibh = {node(0, x.parent, x.child)
                for x in alllinks}  # To weed out multible  links
     #
         nodelist = {n for nodes in ibh for n in (nodes.parent, nodes.child)}
-        
-        
+
+
         try:
-            self.value_dic =  {v:  self.get_values(v) for v in nodelist } 
+            self.value_dic =  {v:  self.get_values(v) for v in nodelist }
         except:
             self.value_dic = dict()
         # breakpoint()
@@ -2840,7 +2843,7 @@ class Graph_Draw_Mixin():
             # print(v,fokus2all)
             show  = (v  in fokus2) # or fokus2all
             # print(f'{v=}, {show=}  {fokus2=}')
-            if (kwargs.get('last', False) or kwargs.get('all', False) or 
+            if (kwargs.get('last', False) or kwargs.get('all', False) or
                 kwargs.get('attshow', False) or kwargs.get('growthshow', False)) and show :
                 # breakpoint()
                 try:
@@ -2849,15 +2852,15 @@ class Graph_Draw_Mixin():
                     lag = int(t[0].lag) if t[0].lag else 0
                     bvalues = [float(get_a_value(self.basedf, per, var, lag))
                                for per in self.current_per]
-                    lvalues = [float(get_a_value(self.lastdf, per, var, lag)) for per in self.current_per] 
+                    lvalues = [float(get_a_value(self.lastdf, per, var, lag)) for per in self.current_per]
                     dvalues = [float(get_a_value(self.lastdf, per, var, lag)-get_a_value(self.basedf, per, var, lag))
-                               for per in self.current_per] 
+                               for per in self.current_per]
                     if kwargs.get('attshow', False) and show:
                        try:
                            # breakpoint()
-                           attvalues = self.att_dic[v] 
+                           attvalues = self.att_dic[v]
                            # attvalues = self.get_att_pct(v.split('(')[0], lag=False, start='', end='')
-                           if filter: 
+                           if filter:
                                attvalues = cutout(attvalues,filter)
                            # attvalues2 = self.att_dic_level[v]
                            dflen = len(attvalues.columns)
@@ -2867,7 +2870,7 @@ class Graph_Draw_Mixin():
                             latt = ''
                     else:
                         latt = ''
-                        
+
                     if kwargs.get('growthshow', False) and show:
                         growthdf = self.get_var_growth(v)
                         dflen = len(growthdf.columns)
@@ -2875,7 +2878,7 @@ class Graph_Draw_Mixin():
                                 self.att_dic[v]) else ''
                     else:
                         lgrowth = ''
-                       
+
 
                     per = "<TR><TD ALIGN='LEFT'>Per</TD>" + \
                         ''.join(['<TD>'+(f'{p}'.strip()+'</TD>').strip()
@@ -2886,7 +2889,7 @@ class Graph_Draw_Mixin():
                         f'{b:{25},.{dec}f}'.strip()+'</TD>').strip() for b in lvalues])+'</TR>'
                     dif = "<TR><TD ALIGN='LEFT' TOOLTIP='Difference between baseline and latest run' href='bogus'>Diff</TD>" + \
                         ''.join(["<TD ALIGN='RIGHT'>"+(f'{b:{25},.{dec}f}'.strip()+'</TD>').strip(
-                        ) for b in dvalues])+'</TR>' 
+                        ) for b in dvalues])+'</TR>'
 #                    tip= f' tooltip="{self.allvar[var]["frml"]}"' if self.allvar[var]['endo'] else f' tooltip = "{v}" '
                     # out = f'"{v}" [shape=box fillcolor= {color(v,navn)}  margin=0.025 fontcolor=blue {stylefunk(var,invisible=invisible)} ' + (
                     out = f'"{v}" [shape=box style=filled  fillcolor=None  margin=0.025 fontcolor=blue ' + (
@@ -2942,26 +2945,26 @@ class Graph_Draw_Mixin():
 
 
         :all: show values for .dfbase and .dflaste
-        :last: show the values for .dflast 
-        :sink: variale to use as sink 
-        :source: variale to use as ssource 
+        :last: show the values for .dflast
+        :sink: variale to use as sink
+        :source: variale to use as ssource
         :svg: Display the svg image in browser
-        :pdf: display the pdf result in acrobat reader 
-        :saveas: Save the drawing as name 
+        :pdf: display the pdf result in acrobat reader
+        :saveas: Save the drawing as name
         :size: figure size default (6,6)
-        :warnings: warnings displayed in command console, default =False 
-        :invisible: set of invisible nodes 
-        :labels: dict of labels for edges 
+        :warnings: warnings displayed in command console, default =False
+        :invisible: set of invisible nodes
+        :labels: dict of labels for edges
         :transdic: dict of translations for consolidation of nodes {'SHOCK[_A-Z]*__J':'SHOCK__J','DEV__[_A-Z]*':'DEV'}
         :dec: decimal places in numbers
-        :HR: horisontal orientation default = False 
-        :des: inject variable descriptions 
+        :HR: horisontal orientation default = False
+        :des: inject variable descriptions
 
 
 '''
 
         dot = self.makedotnew(alledges, navn=navn, **kwargs)
-        
+
         fname = kwargs.get('saveas', navn if navn else "A_model_graph")
 
         if kwargs.get('dot', False):
@@ -3018,15 +3021,15 @@ class Graph_Draw_Mixin():
 
     @staticmethod
     def display_graph(out, fname, **kwargs):
-        '''Generates a graphviz file from the commands in out. 
+        '''Generates a graphviz file from the commands in out.
 
         The file is placed in cwd/graph
 
-        A png and a svg file is generated, and the svg file is displayed if possible. 
+        A png and a svg file is generated, and the svg file is displayed if possible.
 
         options pdf and eps determins if a pdf and an eps file is genrated.
 
-        option fpdf will cause the graph displayed in a seperate pdf window 
+        option fpdf will cause the graph displayed in a seperate pdf window
 
         option browser determins if a seperate browser window is open'''
 
@@ -3095,7 +3098,7 @@ class Graph_Draw_Mixin():
 class Display_Mixin():
 
     def vis(self, *args, **kwargs):
-        ''' Visualize the data of this model instance 
+        ''' Visualize the data of this model instance
         if the user has another vis class she can place it in _vis, then that will be used'''
         if not hasattr(self, '_vis'):
             self._vis = mv.vis
@@ -3108,7 +3111,7 @@ class Display_Mixin():
         return mv.compvis(self, *args, **kwargs)
 
     def write_eq(self, name='My_model.fru', lf=True):
-        ''' writes the formulas to file, can be input into model 
+        ''' writes the formulas to file, can be input into model
 
         lf=True -> new lines are put after each frml '''
         with open(name, 'w') as out:
@@ -3138,7 +3141,7 @@ class Display_Mixin():
 
     def print_eq_values(self, varname, databank=None, all=False, dec=1, lprint=1, per=None):
         ''' for an endogeneous variable, this function prints out the frml and input variale
-        for each periode in the current_per. 
+        for each periode in the current_per.
         The function takes special acount of dataframes and series '''
         res = self.get_eq_values(
             varname, showvar=True, databank=databank, per=per)
@@ -3212,7 +3215,7 @@ class Display_Mixin():
                 print(' ' * 5, j, '\n', ' ' * 10,
                       [xx for xx in self.lister[i][j]])
 
-   
+
 
     def keep_print(self, pat='*', start='', slut='', start_ofset=0, slut_ofset=0, diff=True):
         """ prints variables from experiments look at keep_get_dict for options
@@ -3248,7 +3251,7 @@ class Display_Mixin():
         out = pd.concat(res, axis=1)
         out.columns.names = ('Variable', 'Experiment')
         return out
-    
+
     # def var_get_df(self, pat='*', start='', slut='', start_ofset=0, slut_ofset=0):
     #     varlist  = self.vlist(pat)
     #     res = {}
@@ -3271,7 +3274,7 @@ class Display_Mixin():
             slut_ofset (TYPE, optional): end ofste period. Defaults to 0.
 
         Returns:
-            res (dictionary): a dict with a dataframe for each experiment 
+            res (dictionary): a dict with a dataframe for each experiment
 
         """
         if len(self.keep_solutions) == 0:
@@ -3303,7 +3306,7 @@ class Display_Mixin():
             slut_ofset (TYPE, optional): end ofste period. Defaults to 0.
 
         Returns:
-            res (dictionary): a dict with a dataframe for each experiment 
+            res (dictionary): a dict with a dataframe for each experiment
 
         """
         if len(self.keep_solutions) == 0:
@@ -3323,14 +3326,14 @@ class Display_Mixin():
                     outv.iloc[:, 0], axis=0) if diff else outv
         return res
 
-    def keep_get_plotdict(self, pat='*', start='', slut='', 
+    def keep_get_plotdict(self, pat='*', start='', slut='',
                           showtype='level',
                    diff=False, diffpct = False, keep_dim=1):
             """
-            returns 
+            returns
             - a dict of {variable in pat :dfs scenarios as columnns } if keep_dim = 1
             - a dict of {scenarios       :dfs with variables in pat as columnns } if keep_dim = 1
-            
+
             Args:
                 pat (string, optional): Variable selection. Defaults to '*'.
                 start (TYPE, optional): start periode. Defaults to ''.
@@ -3340,54 +3343,54 @@ class Display_Mixin():
                                           first experiment or the first scenario. Defaults to False.
                 diffpct (logical,optional) : if True shows the difference in percent instead of level
                 mul (float, optional): multiplier of data. Defaults to 1.0.
-                
+
             Returns:
                 figs :a dict with data
     """
             # breakpoint()
             if keep_dim:
                 dfs = self.keep_get_dict(pat, start, slut, -1 if  showtype == 'growth' else 0, 0)
-            else: 
+            else:
                 dfs = self.keep_var_dict(pat, start, slut,  -1 if  showtype == 'growth' else 0, 0)
-                
+
             if showtype == 'growth':
                 dfs = {v: (vdf.pct_change()*100.).iloc[1:,:] for v, vdf in dfs.items()}
-        
+
             elif showtype == 'change':
                 dfs = {v: vdf.diff() for v, vdf in dfs.items()}
-        
+
             else:
-                ... 
-            
-            if keep_dim: 
+                ...
+
+            if keep_dim:
                 if diff:
                     dfsres = {v: vdf.subtract(
                         vdf.iloc[:, 0], axis=0) for v, vdf in dfs.items()}
-                elif diffpct: 
+                elif diffpct:
                     dfsres = {v:  vdf.subtract(
                         vdf.iloc[:, 0], axis=0).divide(
                         vdf.iloc[:, 0], axis=0)*100 for v, vdf in dfs.items()}
-                   
+
                 else:
                     dfsres = dfs
-            else:          
+            else:
                first_scenario = dfs[list(dfs.keys())[0]]
                if diff:
-                   dfsres = {v: vdf - first_scenario 
+                   dfsres = {v: vdf - first_scenario
                         for i,(v, vdf)  in enumerate(dfs.items())  if i >= 1}
-               elif diffpct: 
+               elif diffpct:
                    dfsres = {v:  (vdf/first_scenario-1.)*100
                         for i,(v, vdf)  in enumerate(dfs.items()) if i >= 1}
-                  
+
                else:
                    dfsres = dfs
-                   
+
             assert not(diff and diffpct) ,"keep_plot can't be called with both diff and diffpct"
-     
+
             return dfsres
-    
-             
-    
+
+
+
     def keep_plot_multi(self, pat='*', start='', slut='', start_ofset=0, slut_ofset=0, showtype='level',
                    diff=False, diffpct = False, mul=1.0,
                    title='', legend=False, scale='linear', yunit='', ylabel='', dec='',
@@ -3396,8 +3399,8 @@ class Display_Mixin():
                    vline=[], savefig='', keep_dim= True,dataonly=False,nrow=None,ncol=2,
                    kind='line',size=(10,10)):
          """
-    
-    
+
+
         Args:
             pat (string, optional): Variable selection. Defaults to '*'.
             start (TYPE, optional): start periode. Defaults to ''.
@@ -3417,12 +3420,12 @@ class Display_Mixin():
             trans (TYPE, optional): . Translation dict for variable names. Defaults to {}.
             showfig (TYPE, optional): Time will come . Defaults to False.
             vline (list of tupels, optional): list of (time,text) for vertical lines. Will be keept, to erase del model.vline
-            savefig (string,optional): folder to save figures in. Can include folder name, if needed the folder will be created 
-            keep_dim (bool,True): if True each line is a scenario else each line is a variable 
-            dataonly = False: If True only the resulting dataframes are returned 
+            savefig (string,optional): folder to save figures in. Can include folder name, if needed the folder will be created
+            keep_dim (bool,True): if True each line is a scenario else each line is a variable
+            dataonly = False: If True only the resulting dataframes are returned
             kind: kind of  plot line|bar|bar_stacked
         Returns:
-            figs : a matplotlib figure . 
+            figs : a matplotlib figure .
         """
          def trim_axs(axs, N):
             """
@@ -3433,24 +3436,24 @@ class Display_Mixin():
                 ax.remove()
             return axs[:N]
          try:
-            
-                    
-             dfsres = self.keep_get_plotdict(pat=pat, start=start, slut=slut, 
+
+
+             dfsres = self.keep_get_plotdict(pat=pat, start=start, slut=slut,
                                    showtype=showtype,
                             diff=diff, diffpct = diffpct, keep_dim=keep_dim)
-             
-             # if we are looking 
+
+             # if we are looking
              number =  len(dfsres)
-             xcol = ncol 
+             xcol = ncol
              xrow=-((-number )//ncol)
              fig,axes = plt.subplots(xrow,xcol)
              axes = trim_axs(axes,number)
              fig.set_size_inches(*size)
-    
+
              xtrans = trans if trans else self.var_description
              aspct = ' as pct ' if diffpct else ' '
              dftype = showtype.capitalize()
-             
+
              for i,(v, df) in enumerate(dfsres.items()):
                  self.plot_basis_ax(axes.flat[i], v , df*mul, legend=legend,
                                         scale=scale, trans=xtrans,
@@ -3459,8 +3462,8 @@ class Display_Mixin():
                                         ylabel='Percent' if showtype == 'growth' else ylabel,
                                         xlabel='',kind = kind,
                                         dec=2 if (showtype == 'growth'   or diffpct) and not dec else dec)
-                     
-    
+
+
              if type(vline) == type(None):  # to delete vline
                  if hasattr(self, 'vline'):
                      del self.vline
@@ -3470,7 +3473,7 @@ class Display_Mixin():
                          self.vline = vline
                      for xtime, text in self.vline:
                          model.keep_add_vline(figs, xtime, text)
-             plt.tight_layout()            
+             plt.tight_layout()
              if savefig:
                  figpath = Path(savefig)
                  suffix = figpath.suffix if figpath.suffix else '.png'
@@ -3479,12 +3482,12 @@ class Display_Mixin():
                  parent.mkdir(parents=True, exist_ok=True)
                  location = parent / f'{stem}{suffix}'
                  fig.savefig(location)
-    
+
              return fig
          except ZeroDivisionError:
              print('no keept solution')
-    
-    
+
+
 
     def inputwidget(self, start='', slut='', basedf=None, **kwargs):
         ''' calls modeljupyter input widget, and keeps the period scope '''
@@ -3497,7 +3500,7 @@ class Display_Mixin():
             with self.set_smpl(start=start, slut=slut):
                 return mj.inputwidget(self, self.basedf, **kwargs)
 
-    
+
     def plot_basis(self,var, df, title='', suptitle='', legend=True, scale='linear', trans={}, dec='',
                    ylabel='', yunit='', xlabel=''):
         ibs = {k:v for k,v in locals().items() if k not in {'self'}}
@@ -3507,7 +3510,7 @@ class Display_Mixin():
         ax = self.plot_basis_ax(ax,**ibs)
         fig.suptitle(suptitle, fontsize=16)
         return fig
-    
+
     @staticmethod
     def plot_basis_ax(ax,var, df, title='', suptitle='', legend=True, scale='linear', trans={}, dec='',
                    ylabel='', yunit='', xlabel='',kind='line'):
@@ -3519,7 +3522,7 @@ class Display_Mixin():
         import matplotlib.cbook as cbook
         import seaborn as sns
         from modelhelp import finddec
-        # breakpoint() 
+        # breakpoint()
         years = mdates.YearLocator()   # every year
         months = mdates.MonthLocator()  # every month
         years_fmt = mdates.DateFormatter('%Y')
@@ -3548,22 +3551,22 @@ class Display_Mixin():
             xval = df.index
 
 
-        if kind == 'line':    
+        if kind == 'line':
             for i, col in enumerate(df.loc[:, df.columns]):
                 yval = df[col]
                 ax.plot(xval, yval, label=col, linewidth=3.0)
                 if not legend:
                     x_pos = xval[-1]
                     ax.text(x_pos, yval.iloc[-1], f' {col}', fontsize=14)
-        elif kind == 'bar_stacked':   
+        elif kind == 'bar_stacked':
             df.plot(ax=ax, stacked=True, kind='bar')
-        elif kind == 'bar':   
+        elif kind == 'bar':
             df.plot(ax=ax, stacked=False, kind='bar')
         else:
             print(f'Error illegal kind:{kind}')
             0/0
-            
-            
+
+
         if legend:
             ax.legend()
         # ax.xaxis.set_minor_locator(ticker.MultipleLocator(years))
@@ -3613,19 +3616,19 @@ class Display_Mixin():
            trans (TYPE, optional): . Translation dict for variable names. Defaults to {}.
            showfig (TYPE, optional): Time will come . Defaults to False.
            vline (list of tupels, optional): list of (time,text) for vertical lines. Will be keept, to erase del model.vline
-           savefig (string,optional): folder to save figures in. Can include folder name, if needed the folder will be created 
+           savefig (string,optional): folder to save figures in. Can include folder name, if needed the folder will be created
        Returns:
-           figs (dict): dict of the generated Matplotlib figures. 
-           keep_dim (bool,True): if True each line is a scenario else each line is a variable 
-           dataonly = False: If True only the resulting dataframes are returned 
+           figs (dict): dict of the generated Matplotlib figures.
+           keep_dim (bool,True): if True each line is a scenario else each line is a variable
+           dataonly = False: If True only the resulting dataframes are returned
        """
 
         try:
             if keep_dim:
                 dfs = self.keep_get_dict(pat, start, slut, start_ofset, slut_ofset)
-            else: 
+            else:
                 dfs = self.keep_var_dict(pat, start, slut, start_ofset, slut_ofset)
-                
+
             if showtype == 'growth':
                 dfs = {v: vdf.pct_change()*100. for v, vdf in dfs.items()}
                 dftype = 'Growth'
@@ -3636,39 +3639,39 @@ class Display_Mixin():
 
             else:
                 dftype = 'Level'
-            
-            if keep_dim: 
+
+            if keep_dim:
                 if diff:
                     dfsres = {v: (vdf.subtract(
                         vdf.iloc[:, 0], axis=0)).iloc[:, 1:] for v, vdf in dfs.items()}
                     aspct=' '
-                elif diffpct: 
+                elif diffpct:
                     dfsres = {v:  (vdf.subtract(
                         vdf.iloc[:, 0], axis=0).divide(
                         vdf.iloc[:, 0], axis=0)*100).iloc[:, 1:] for v, vdf in dfs.items()}
                     aspct= ' in percent '
-                   
+
                 else:
                     dfsres = dfs
-            else:          
+            else:
                first_scenario = dfs[list(dfs.keys())[0]]
                if diff:
-                   dfsres = {v: vdf - first_scenario 
+                   dfsres = {v: vdf - first_scenario
                         for i,(v, vdf)  in enumerate(dfs.items()) if i >= 1}
                    aspct=' '
-               elif diffpct: 
+               elif diffpct:
                    dfsres = {v:  (vdf/first_scenario-1.)*100
                         for i,(v, vdf)  in enumerate(dfs.items()) if i >= 1}
                    aspct= ' in percent '
-                  
+
                else:
                    dfsres = dfs
-                   
+
             assert not(diff and diffpct) ,"keep_plot can't be called with both diff and diffpct"
-            
-            if dataonly: 
+
+            if dataonly:
                 return dfsres
-            
+
             xtrans = trans if trans else self.var_description
             figs = {v: self.plot_basis(v,  df*mul, legend=legend,
                                        scale=scale, trans=xtrans,
@@ -3731,13 +3734,13 @@ class Display_Mixin():
              selectfrom (list, optional): the variables to select from, Defaults to [] -> all endogeneous variables .
              legend (bool, optional)c: DESCRIPTION. legends or to the right of the curve. Defaults to 1.
              dec (string, optional): decimals on the y-axis. Defaults to '0'.
-             use_descriptions : Use the variable descriptions from the model 
+             use_descriptions : Use the variable descriptions from the model
 
          Returns:
              None.
 
          self.keep_wiz_figs is set to a dictionary containing the figures. Can be used to produce publication
-         quality files. 
+         quality files.
 
         """
 
@@ -3774,14 +3777,14 @@ class Display_Mixin():
             if type(diff) == str:
                 diffpct = True
                 ldiff = False
-            else: 
+            else:
                 ldiff = diff
                 diffpct = False
-            # print(ldiff,diffpct)    
+            # print(ldiff,diffpct)
             with self.set_smpl(*smpl):
                 self.keep_wiz_figs = self.keep_plot(vars, diff=ldiff, diffpct = diffpct, scale=scale, showtype=showtype,
                                                     legend=legend, dec=dec, vline=vline)
-            plt.show()    
+            plt.show()
         description_width = 'initial'
         description_width_long = 'initial'
         keep_keys = list(self.keep_solutions.keys())
@@ -3817,7 +3820,7 @@ class Display_Mixin():
         display(ui)
         display(show)
         return
-    
+
     def keep_viz_prefix(self, pat='*', smpl=('', ''), selectfrom={}, legend=1, dec='', use_descriptions=True,
                  select_width='', select_height='200px', vline=[],prefix_dict={},add_var_name=False,short=False):
         """
@@ -3829,13 +3832,13 @@ class Display_Mixin():
              selectfrom (list, optional): the variables to select from, Defaults to [] -> all keept  variables .
              legend (bool, optional)c: DESCRIPTION. legends or to the right of the curve. Defaults to 1.
              dec (string, optional): decimals on the y-axis. Defaults to '0'.
-             use_descriptions : Use the variable descriptions from the model 
+             use_descriptions : Use the variable descriptions from the model
 
          Returns:
              None.
 
          self.keep_wiz_figs is set to a dictionary containing the figures. Can be used to produce publication
-         quality files. 
+         quality files.
 
         """
 
@@ -3843,8 +3846,8 @@ class Display_Mixin():
         from ipywidgets import Select
         from ipywidgets import interactive, ToggleButtons, SelectionRangeSlider, RadioButtons
         from ipywidgets import interactive_output, HBox, VBox, link, Dropdown,Output
-        
-        
+
+
         minper = self.lastdf.index[0]
         maxper = self.lastdf.index[-1]
         options = [(ind, nr) for nr, ind in enumerate(self.lastdf.index)]
@@ -3853,10 +3856,10 @@ class Display_Mixin():
         init_start = self.lastdf.index.get_loc(show_per[0])
         init_end = self.lastdf.index.get_loc(show_per[-1])
         keepvar = sorted (list(self.keep_solutions.values())[0].columns)
-        defaultvar = [v for v in self.vlist(pat) if v in keepvar] 
+        defaultvar = [v for v in self.vlist(pat) if v in keepvar]
         _selectfrom = [s.upper() for s in selectfrom] if selectfrom else keepvar
-        
-        gross_selectfrom =  [(f'{(v+" ") if add_var_name else ""}{self.var_description[v] if use_descriptions else v}',v) for v in _selectfrom] 
+
+        gross_selectfrom =  [(f'{(v+" ") if add_var_name else ""}{self.var_description[v] if use_descriptions else v}',v) for v in _selectfrom]
         width = select_width if select_width else '50%' if use_descriptions else '50%'
 
         def explain(i_smpl, selected_vars, diff, showtype, scale, legend):
@@ -3865,13 +3868,13 @@ class Display_Mixin():
             if type(diff) == str:
                 diffpct = True
                 ldiff = False
-            else: 
+            else:
                 ldiff = diff
                 diffpct = False
             with self.set_smpl(*smpl):
                 self.keep_wiz_figs = self.keep_plot(vars, diff=ldiff, diffpct = diffpct, scale=scale, showtype=showtype,
                                                     legend=legend, dec=dec, vline=vline)
-            plt.show()    
+            plt.show()
         description_width = 'initial'
         description_width_long = 'initial'
         keep_keys = list(self.keep_solutions.keys())
@@ -3891,49 +3894,49 @@ class Display_Mixin():
         legend = RadioButtons(options=[('Yes', 1), ('No', 0)], description='Legends', value=legend, style={
                               'description_width': description_width})
         # breakpoint()
-        
-        
+
+
         def get_prefix(g):
             try:
                 current_suffix = {v[len(g['old'][0]):] for v in selected_vars.value}
             except:
                 current_suffix = ''
-                
+
             new_prefix = g['new']
-            selected_prefix_var =  [(des,variable) for des,variable in gross_selectfrom  
+            selected_prefix_var =  [(des,variable) for des,variable in gross_selectfrom
                                     if any([variable.startswith(n)  for n in new_prefix])]
-                                    
+
             selected_vars.options = selected_prefix_var
-            
+
             if current_suffix:
                 new_selection   = [f'{n}{c}' for c in current_suffix for n in new_prefix
                                         if f'{n}{c}' in {s  for p,s in selected_prefix_var}]
-                selected_vars.value  = new_selection 
+                selected_vars.value  = new_selection
                 # print(f"{new_selection=}{current_suffix=}{g['old']=}")
-            else:    
+            else:
                 selected_vars.value  = [selected_prefix_var[0][1]]
-                
-                   
-        if len(prefix_dict): 
-            selected_prefix = SelectMultiple(value=[select_prefix[0][1]], options=select_prefix, 
+
+
+        if len(prefix_dict):
+            selected_prefix = SelectMultiple(value=[select_prefix[0][1]], options=select_prefix,
                                              layout=Layout(width='25%', height=select_height, font="monospace"),
                                        description='')
-               
+
             selected_prefix.observe(get_prefix,names='value',type='change')
             select = HBox([selected_vars,selected_prefix])
             get_prefix({'new':select_prefix[0]})
-        else: 
+        else:
             select = VBox([selected_vars])
-            
+
         options1 = HBox([diff]) if short >=2 else HBox([diff,legend])
         options2 = HBox([scale, showtype])
         if short:
             vui = [select, options1, i_smpl]
         else:
             vui = [select, options1, options2, i_smpl]
-        vui =  vui[:-1] if short >= 2 else vui  
+        vui =  vui[:-1] if short >= 2 else vui
         ui = VBox(vui)
-        
+
         show = interactive_output(explain, {'i_smpl': i_smpl, 'selected_vars': selected_vars, 'diff': diff, 'showtype': showtype,
                                             'scale': scale, 'legend': legend})
         # display(ui, show)
@@ -3943,7 +3946,7 @@ class Display_Mixin():
 
     @staticmethod
     def display_toc(text='**Jupyter notebooks in this and all subfolders**',all=False):
-        '''In a jupyter notebook this function displays a clickable table of content of all 
+        '''In a jupyter notebook this function displays a clickable table of content of all
         jupyter notebooks in this and sub folders'''
 
         from IPython.display import display, Markdown, HTML
@@ -3954,7 +3957,7 @@ class Display_Mixin():
             if len(dir.parts) and str(dir.parts[-1]).startswith('.'):
                 continue
             for i, notebook in enumerate(sorted(dir.glob('*.ipynb'))):
-                # print(notebook)    
+                # print(notebook)
                 if (not all) and (notebook.name.startswith('test') or notebook.name.startswith('Overview')):
                     continue
                 if i == 0:
@@ -3971,7 +3974,7 @@ class Display_Mixin():
                     f'&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{blanks} <a href="{notebook}" target="_blank">{name}</a>'))
     @staticmethod
     def display_toc_this(pat='*',text='**Jupyter notebooks**',path='.',ext='ipynb',showext=False):
-        
+
         '''In a jupyter notebook this function displays a clickable table of content in the folder pat with name in path'''
 
         from IPython.display import display, Markdown, HTML
@@ -4008,8 +4011,8 @@ class Display_Mixin():
                                    """)
         except:
            print('No scroll off')
-           
-           
+
+
     @staticmethod
     def scroll_on():
         try:
@@ -4024,7 +4027,7 @@ class Display_Mixin():
 
     @staticmethod
     def modelflow_auto(run=True):
-        '''In a jupyter notebook this function activate autorun of the notebook. 
+        '''In a jupyter notebook this function activate autorun of the notebook.
 
         Also it makes Jupyter use a larger portion of the browser width
 
@@ -4046,7 +4049,7 @@ class Display_Mixin():
             <script>
                 // AUTORUN ALL CELLS ON NOTEBOOK-LOAD!
                 require(
-                    ['base/js/namespace', 'jquery'], 
+                    ['base/js/namespace', 'jquery'],
                     function(jupyter, $) {
                         $(jupyter.events).on('kernel_ready.Kernel', function () {
                             console.log('Auto-running all cells-below...');
@@ -4063,16 +4066,16 @@ class Display_Mixin():
 
 class Json_Mixin():
     '''This mixin class can dump a model and solution
-    as json serialiation to a file. 
+    as json serialiation to a file.
 
-    allows the precooking of a model and solution, so 
-    a user can use a model without specifying it in 
-    a session. 
+    allows the precooking of a model and solution, so
+    a user can use a model without specifying it in
+    a session.
     '''
 
     def modeldump(self, outfile='',keep=False):
         '''Dumps a model and its lastdf to a json file
-        
+
         if keep=True the model.keep_solutions will alse be dumped'''
 
         dumpjson = {
@@ -4087,7 +4090,7 @@ class Json_Mixin():
             'keep_solutions': {k:v.to_json() for k,v in self.keep_solutions.items()} if keep else {},
             'wb_MFMSAOPTIONS': self.wb_MFMSAOPTIONS if hasattr(self, 'wb_MFMSAOPTIONS') else '',
 
- 
+
         }
 
         if outfile != '':
@@ -4273,15 +4276,15 @@ class Solver_Mixin():
     DEFAULT_relconv = 0.0000001
 
     def __call__(self, *args, **kwargs):
-        ''' Runs a model. 
+        ''' Runs a model.
 
-        Default a straight model is calculated by *xgenr* a simultaneous model is solved by *sim* 
+        Default a straight model is calculated by *xgenr* a simultaneous model is solved by *sim*
 
-        :sim: If False forces a  model to be calculated (not solved) if True force simulation 
-        :setbase: If True, place the result in model.basedf 
+        :sim: If False forces a  model to be calculated (not solved) if True force simulation
+        :setbase: If True, place the result in model.basedf
         :setlast: if False don't place the results in model.lastdf
 
-        if the modelproperty previousbase is true, the previous run is used as basedf. 
+        if the modelproperty previousbase is true, the previous run is used as basedf.
 
 
         '''
@@ -4324,9 +4327,9 @@ class Solver_Mixin():
         # print(f'solver:{solver},solverkwargs:{newkwargs}')
         # breakpoint()
         outdf = self.model_solver(*args, **newkwargs)
-        if  newkwargs.get('cache_clear', True): 
+        if  newkwargs.get('cache_clear', True):
             self.dekomp.cache_clear()
-            
+
         if newkwargs.get('keep', '') and self.save:
             if newkwargs.get('keep_variables', ''):
                 keepvar = self.vlist(newkwargs.get('keep_variables', ''))
@@ -4390,9 +4393,9 @@ class Solver_Mixin():
                         jitfile.parent.mkdir(parents=True, exist_ok=True)
                         if not silent:
                             print(f'{transpile_reset=} {hasattr(self, f"pro_{jitname}")=}  {jitfile.is_file()=}')
-                        initfile = jitfile.parent /'__init__.py' 
+                        initfile = jitfile.parent /'__init__.py'
                         if not initfile.exists():
-                            with open(initfile,'wt') as i: 
+                            with open(initfile,'wt') as i:
                                 i.write('#')
                         if transpile_reset or not jitfile.is_file():
                             solvetext0 = solveout()
@@ -4403,12 +4406,12 @@ class Solver_Mixin():
 
                             with open(jitfile, 'wt') as f:
                                 f.write(solvetext)
-                            importlib.invalidate_caches()  
+                            importlib.invalidate_caches()
                             if not silent:
                                 print(f'Writes the evaluation functon to {jitfile.is_file()=}')
-                                
+
                         if not silent:
-                            print(f'Importing {jitfile}')    
+                            print(f'Importing {jitfile}')
                         m1 = importlib.import_module('.'+jitfile.stem,jitfile.parent.name)
 
                         pro_jit, core_jit, epi_jit = m1.prolog, m1.core, m1.epilog
@@ -4447,15 +4450,15 @@ class Solver_Mixin():
             stringjit=True, transpile_reset=False,
             dumpvar='*', init=False, ldumpvar=False, dumpwith=15, dumpdecimal=5, chunk=30, ljit=False, timeon=False,
             fairopt={'fair_max_iterations ': 1}, progressbar=False,**kwargs):
-        '''Evaluates this model on a databank from start to slut (means end in Danish). 
+        '''Evaluates this model on a databank from start to slut (means end in Danish).
 
-        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function 
-        (:func:`modelclass.model.fouteval`) 
+        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function
+        (:func:`modelclass.model.fouteval`)
         then it evaluates the function and returns the values to a the Dataframe in the databank.
 
-        The text for the evaluater function is placed in the model property **make_los_text** 
-        where it can be inspected 
-        in case of problems.         
+        The text for the evaluater function is placed in the model property **make_los_text**
+        where it can be inspected
+        in case of problems.
 
         '''
         starttimesetup = time.time()
@@ -4479,7 +4482,7 @@ class Solver_Mixin():
         newdata, databank = self.is_newdata(databank)
 
         self.pro2d, self.solve2d, self.epi2d = self.makelos(
-            databank, solvename='sim', ljit=ljit, stringjit=stringjit, transpile_reset=transpile_reset, 
+            databank, solvename='sim', ljit=ljit, stringjit=stringjit, transpile_reset=transpile_reset,
             chunk=chunk, newdata=newdata,silent=silent)
 
         values = databank.values.copy()  #
@@ -4507,10 +4510,10 @@ class Solver_Mixin():
         for fairiteration in range(fair_max_iterations):
             if fair_max_iterations >= 2:
                 print(f'Fair-Taylor iteration: {fairiteration}')
-            with tqdm(total=len(sol_periode),disable = not progressbar,desc=f'Solving {self.name}',bar_format=bars) as pbar:              
+            with tqdm(total=len(sol_periode),disable = not progressbar,desc=f'Solving {self.name}',bar_format=bars) as pbar:
                 for self.periode in sol_periode:
                     row = databank.index.get_loc(self.periode)
-    
+
                     if ldumpvar:
                         self.dumplist.append([fairiteration, self.periode, int(0)]+[values[row, p]
                                                                                     for p in dumpplac])
@@ -4523,7 +4526,7 @@ class Solver_Mixin():
                         with self.timer(f'Evaluate {self.periode}/{iteration} ', timeon) as t:
                             self.solve2d(values, values, row,  alfa)
                         ittotal += 1
-    
+
                         if ldumpvar:
                             self.dumplist.append([fairiteration, self.periode, int(iteration+1)]+[values[row, p]
                                                                                                   for p in dumpplac])
@@ -4541,7 +4544,7 @@ class Solver_Mixin():
                             itbefore = itafter
                     else:
                         print(f'{self.periode} not converged in {iteration} iterations')
-    
+
                     self.epi2d(values, values, row,  1.0)
                     pbar.update()
         endtime = time.time()
@@ -4559,7 +4562,7 @@ class Solver_Mixin():
         if stats:
             self.simtime = endtime-starttime
             self.setuptime = endtimesetup - starttimesetup
-            
+
             numberfloats = (self.flop_get['core'][-1][1]*ittotal+
                  len(sol_periode)*(self.flop_get['prolog'][-1][1]+self.flop_get['epilog'][-1][1]))
             print(
@@ -4595,7 +4598,7 @@ class Solver_Mixin():
                        ljit=False, type='gauss', cache=False):
         ''' takes a list of terms and translates to a evaluater function called los
 
-        The model axcess the data through:Dataframe.value[rowindex+lag,coloumnindex] which is very efficient 
+        The model axcess the data through:Dataframe.value[rowindex+lag,coloumnindex] which is very efficient
 
         '''
         short, long, longer = 4*' ', 8*' ', 12 * ' '
@@ -4607,13 +4610,13 @@ class Solver_Mixin():
         #print(f'Generating source for {self.name} using ljit = {ljit} ')
 
         def make_gaussline2(vx, nodamp=False):
-            ''' takes a list of terms and translates to a line in a gauss-seidel solver for 
+            ''' takes a list of terms and translates to a line in a gauss-seidel solver for
             simultanius models
-            the variables            
+            the variables
 
             New version to take hand of several lhs variables. Dampning is not allowed for
             this. But can easely be implemented by makeing a function to multiply tupels
-            nodamp is for pre and epilog solutions, which should not be dampened. 
+            nodamp is for pre and epilog solutions, which should not be dampened.
             '''
             termer = self.allvar[vx]['terms']
             assigpos = self.allvar[vx]['assigpos']
@@ -4676,9 +4679,9 @@ class Solver_Mixin():
             return res+'\n'
 
         def makeafunk(name, order, linemake, chunknumber, debug=False, overhead=0, oldeqs=0, nodamp=False, ljit=False, totalchunk=1):
-            ''' creates the source of  an evaluation function 
-            keeps tap of how many equations and lines is in the functions abowe. 
-            This allows the errorfunction to retriewe the variable for which a math error is thrown 
+            ''' creates the source of  an evaluation function
+            keeps tap of how many equations and lines is in the functions abowe.
+            This allows the errorfunction to retriewe the variable for which a math error is thrown
 
             '''
             fib1 = []
@@ -4708,7 +4711,7 @@ class Solver_Mixin():
             return list(chain(fib1, content, fib2)), newoverhead+len(content)+len(fib2), neweq
 
         def makechunkedfunk(name, order, linemake, debug=False, overhead=0, oldeqs=0, nodamp=False, chunk=None, ljit=False):
-            ''' makes the complete function to evaluate the model. 
+            ''' makes the complete function to evaluate the model.
             keeps the tab on previous overhead lines and equations, to helt the error function '''
 
             newoverhead = overhead
@@ -4785,15 +4788,15 @@ class Solver_Mixin():
               max_iterations=100, conv='*', absconv=1.0, relconv=DEFAULT_relconv, init=False,
               dumpvar='*', ldumpvar=False, dumpwith=15, dumpdecimal=5, chunk=30, ljit=False, stringjit=True, transpile_reset=False,
               fairopt={'fair_max_iterations ': 1}, timeon=0, **kwargs):
-        '''Evaluates this model on a databank from start to slut (means end in Danish). 
+        '''Evaluates this model on a databank from start to slut (means end in Danish).
 
-        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function 
-        (:func:`modelclass.model.fouteval`) 
+        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function
+        (:func:`modelclass.model.fouteval`)
         then it evaluates the function and returns the values to a the Dataframe in the databank.
 
-        The text for the evaluater function is placed in the model property **make_los_text** 
-        where it can be inspected 
-        in case of problems.         
+        The text for the evaluater function is placed in the model property **make_los_text**
+        where it can be inspected
+        in case of problems.
 
         '''
         starttimesetup = time.time()
@@ -4923,7 +4926,7 @@ class Solver_Mixin():
     def outsolve1dcunk(self, debug=0, chunk=None, ljit=False, cache='False'):
         ''' takes a list of terms and translates to a evaluater function called los
 
-        The model axcess the data through:Dataframe.value[rowindex+lag,coloumnindex] which is very efficient 
+        The model axcess the data through:Dataframe.value[rowindex+lag,coloumnindex] which is very efficient
 
         '''
         short, long, longer = 4*' ', 8*' ', 12 * ' '
@@ -4934,9 +4937,9 @@ class Solver_Mixin():
             thisdebug = debug
 
         def makeafunk(name, order, linemake, chunknumber, debug=False, overhead=0, oldeqs=0, nodamp=False, ljit=False, totalchunk=1):
-            ''' creates the source of  an evaluation function 
-            keeps tap of how many equations and lines is in the functions abowe. 
-            This allows the errorfunction to retriewe the variable for which a math error is thrown 
+            ''' creates the source of  an evaluation function
+            keeps tap of how many equations and lines is in the functions abowe.
+            This allows the errorfunction to retriewe the variable for which a math error is thrown
 
             '''
             fib1 = []
@@ -4966,7 +4969,7 @@ class Solver_Mixin():
             return list(chain(fib1, content, fib2)), newoverhead+len(content)+len(fib2), neweq
 
         def makechunkedfunk(name, order, linemake, debug=False, overhead=0, oldeqs=0, nodamp=False, chunk=None, ljit=False):
-            ''' makes the complete function to evaluate the model. 
+            ''' makes the complete function to evaluate the model.
             keeps the tab on previous overhead lines and equations, to helt the error function '''
 
             newoverhead = overhead
@@ -5044,15 +5047,15 @@ class Solver_Mixin():
                dumpvar='*', ldumpvar=False, dumpwith=15, dumpdecimal=5, chunk=30, ljit=False, stringjit=True, transpile_reset=False, lnjit=False, init=False,
                newtonalfa=1.0, newtonnodamp=0, forcenum=True,
                fairopt={'fair_max_iterations ': 1}, **kwargs):
-        '''Evaluates this model on a databank from start to slut (means end in Danish). 
+        '''Evaluates this model on a databank from start to slut (means end in Danish).
 
-        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function 
-        (:func:`modelclass.model.fouteval`) 
+        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function
+        (:func:`modelclass.model.fouteval`)
         then it evaluates the function and returns the values to a the Dataframe in the databank.
 
-        The text for the evaluater function is placed in the model property **make_los_text** 
-        where it can be inspected 
-        in case of problems.         
+        The text for the evaluater function is placed in the model property **make_los_text**
+        where it can be inspected
+        in case of problems.
 
         '''
     #    print('new nwwton')
@@ -5215,15 +5218,15 @@ class Solver_Mixin():
                     dumpvar='*', ldumpvar=False, dumpwith=15, dumpdecimal=5, chunk=30, nchunk=30, ljit=False, stringjit=True, transpile_reset=False, nljit=0,
                     fairopt={'fair_max_iterations ': 1}, debug=False, timeit=False, nonlin=False,
                     newtonalfa=1.0, newtonnodamp=0, forcenum=True, newton_reset=False, **kwargs):
-        '''Evaluates this model on a databank from start to slut (means end in Danish). 
+        '''Evaluates this model on a databank from start to slut (means end in Danish).
 
-        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function 
-        (:func:`modelclass.model.fouteval`) 
+        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function
+        (:func:`modelclass.model.fouteval`)
         then it evaluates the function and returns the values to a the Dataframe in the databank.
 
-        The text for the evaluater function is placed in the model property **make_los_text** 
-        where it can be inspected 
-        in case of problems.         
+        The text for the evaluater function is placed in the model property **make_los_text**
+        where it can be inspected
+        in case of problems.
 
         '''
     #    print('new nwwton')
@@ -5390,15 +5393,15 @@ class Solver_Mixin():
                              dumpvar='*', ldumpvar=False, dumpwith=15, dumpdecimal=5, chunk=30, ljit=False, stringjit=True, transpile_reset=False, lnjit=False,
                              fairopt={'fair_max_iterations ': 1},
                              newtonalfa=1.0, newtonnodamp=0, forcenum=True, **kwargs):
-        '''Evaluates this model on a databank from start to slut (means end in Danish). 
+        '''Evaluates this model on a databank from start to slut (means end in Danish).
 
-        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function 
-        (:func:`modelclass.model.fouteval`) 
+        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function
+        (:func:`modelclass.model.fouteval`)
         then it evaluates the function and returns the values to a the Dataframe in the databank.
 
-        The text for the evaluater function is placed in the model property **make_los_text** 
-        where it can be inspected 
-        in case of problems.         
+        The text for the evaluater function is placed in the model property **make_los_text**
+        where it can be inspected
+        in case of problems.
 
         '''
     #    print('new nwwton')
@@ -5467,12 +5470,12 @@ class Solver_Mixin():
                 for iteration in range(max_iterations):
                     with self.timer(f'sim per:{self.periode} it:{iteration}', 0) as xxtt:
                         before = values[row, newton_col_endo]
-                        
+
                         self.pronew2d(values, outvalues, row,  alfa)
                         self.solvenew2d(values, outvalues, row,  alfa)
                         self.epinew2d(values, outvalues, row,  alfa)
-                        
-                        
+
+
                         now = outvalues[row, newton_col]
                         distance = now
                         newton_conv = np.abs(distance).sum()
@@ -5562,15 +5565,15 @@ class Solver_Mixin():
                                   dumpvar='*', ldumpvar=False, dumpwith=15, dumpdecimal=5, chunk=30, nchunk=None, ljit=False, nljit=0, stringjit=True, transpile_reset=False,
                                   fairopt={'fair_max_iterations ': 1}, debug=False, timeit=False, nonlin=False,
                                   newtonalfa=1.0, newtonnodamp=0, forcenum=True, newton_reset=False, **kwargs):
-        '''Evaluates this model on a databank from start to slut (means end in Danish). 
+        '''Evaluates this model on a databank from start to slut (means end in Danish).
 
-        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function 
-        (:func:`modelclass.model.fouteval`) 
+        First it finds the values in the Dataframe, then creates the evaluater function through the *outeval* function
+        (:func:`modelclass.model.fouteval`)
         then it evaluates the function and returns the values to a the Dataframe in the databank.
 
-        The text for the evaluater function is placed in the model property **make_los_text** 
-        where it can be inspected 
-        in case of problems.         
+        The text for the evaluater function is placed in the model property **make_los_text**
+        where it can be inspected
+        in case of problems.
 
         '''
     #    print('new nwwton')
@@ -5744,10 +5747,10 @@ class Solver_Mixin():
 
     def res(self, databank, start='', slut='', debug=False, timeit=False, silent=False,
             chunk=None, ljit=0, stringjit=True, transpile_reset=False, alfa=1, stats=0, samedata=False, **kwargs):
-        '''calculates the result of a model, no iteration or interaction 
-        The text for the evaluater function is placed in the model property **make_res_text** 
-        where it can be inspected 
-        in case of problems.         
+        '''calculates the result of a model, no iteration or interaction
+        The text for the evaluater function is placed in the model property **make_res_text**
+        where it can be inspected
+        in case of problems.
 
         '''
     #    print('new nwwton')
@@ -5858,7 +5861,7 @@ class Solver_Mixin():
 
     def show_iterations(self, pat='*', per='', last=0, change=False):
         '''
-        shows the last iterations for the most recent simulation. 
+        shows the last iterations for the most recent simulation.
         iterations are dumped if ldumpvar is set to True
         variables can be selceted by: dumpvar = '<pattern>'
 
@@ -5902,56 +5905,56 @@ class Solver_Mixin():
             print('No iteration dump')
 # try:
 #     from modeldashsidebar import Dash_Mixin
-# except: 
+# except:
 #     ...
 #     print('The DASH dashboard is not loaded')
 #     class Dash_Mixin:
-#         ''' a dummy class if the dash dependencies are not installed. 
-#         remember: 
-#         conda install pip --y    
-#         pip install dash_interactive_graphviz 
+#         ''' a dummy class if the dash dependencies are not installed.
+#         remember:
+#         conda install pip --y
+#         pip install dash_interactive_graphviz
 #         '''
 #         ...
-        
+
 class Dash_Mixin():
     def modeldash(self,*arg,**kwargs):
         from modeldashsidebar import Dash_graph
         ...
         out = Dash_graph(self,*arg,**kwargs)
-        return out 
+        return out
 
 class WB_Mixin():
     @cached_property
     def wb_behavioral(self):
-        ''' returns endogeneous where the frml name contains a Z which signals a stocastic equation 
+        ''' returns endogeneous where the frml name contains a Z which signals a stocastic equation
         '''
         out1 =   {vx for vx in self.endogene if 'Z' in self.allvar[vx]['frmlname']}
-        alt  =   {vx for vx in self.endogene if 'Z' in self.allvar[vx]['frmlname'] 
+        alt  =   {vx for vx in self.endogene if 'Z' in self.allvar[vx]['frmlname']
                   if   vx+'_X' in self.exogene and  vx+'_D' in self.exogene }
         # breakpoint()
         assert out1 == alt, 'Problems wih wb behavioral '
         return  out1
-    
+
     @cached_property
     def wb_ident(self):
         '''returns endogeneous variables not in wb_behavioral '''
         return  self.endogene-self.wb_behavioral
-    
+
     def wb_exog(self,df,pat='*',start='',end=''):
         '''
-        Fixes variables to the current values. 
-        
-        for variables where the equation looks like 
-        
+        Fixes variables to the current values.
+
+        for variables where the equation looks like
+
         ´´´var = (rhs)*(1-var_d)+var_x*var_d```
-        
+
         so:
-        ```     
+        ```
         var_x = var
         var_d = 1
         ```
-        
-        The variables fulfilling this are elements of .wb_behavioral 
+
+        The variables fulfilling this are elements of .wb_behavioral
 
         Args:
             df (TYPE): Input dataframe should contain a solution and all variables ..
@@ -5964,25 +5967,25 @@ class WB_Mixin():
 
         '''
         '''Fix all  variables which can be exogenized to their value '''
-    
-        dataframe=df.copy() 
+
+        dataframe=df.copy()
         beh   = sorted(self.wb_behavioral )
         selected  = [v for up in pat.split() for v in fnmatch.filter(beh, up.upper())]
         exo   = [v+'_X' for v in selected ]
         dummy = [v+'_D' for v in selected ]
-        
+
         with self.set_smpl(start,end):
-            dataframe.loc[self.current_per,dummy] = 1.0 
+            dataframe.loc[self.current_per,dummy] = 1.0
             selected_values = dataframe.loc[self.current_per,selected]
-            selected_values.columns = exo 
+            selected_values.columns = exo
             # breakpoint()
             dataframe.loc[self.current_per,exo] = selected_values.loc[self.current_per,exo]
-    
+
         return dataframe
-    
+
     def wb_endog(self,df,pat='*',start='',end=''):
         '''
-        Unfix (endogenize) variables 
+        Unfix (endogenize) variables
 
         Args:
             df (Dataframe): Input dataframe, should contain a solution and all variables .
@@ -5994,21 +5997,21 @@ class WB_Mixin():
             dataframe (TYPE): A dratframe with all dummies for the selected variablse set to 0 .
 
         '''
-        
-        
-        dataframe=df.copy() 
-    
+
+
+        dataframe=df.copy()
+
         beh   = sorted(self.wb_behavioral )
         selected  = [v for up in pat.split() for v in fnmatch.filter(beh, up.upper())]
 
         dummy = [v+'_D' for v in selected ]
-        
+
         with self.set_smpl(start,end):
-            dataframe.loc[self.current_per,dummy] = 0.0      
+            dataframe.loc[self.current_per,dummy] = 0.0
         return dataframe
 
-         
-        
+
+
 class model(Zip_Mixin, Json_Mixin, Model_help_Mixin, Solver_Mixin, Display_Mixin, Graph_Draw_Mixin, Graph_Mixin,
             Dekomp_Mixin, Org_model_Mixin, BaseModel, Description_Mixin, Excel_Mixin, Dash_Mixin, Modify_Mixin,WB_Mixin):
     pass
@@ -6027,18 +6030,18 @@ def ttimer(*args, **kwargs):
 
 def create_model(navn, hist=0, name='', new=True, finished=False, xmodel=model, straight=False, funks=[]):
     '''Creates either a model instance or a model and a historic model from formulars. \n
-    The formulars can be in a string or in af file withe the extension .txt 
+    The formulars can be in a string or in af file withe the extension .txt
 
     if:
 
     :navn: The model as text or as a file with extension .txt
-    :name: Name of the model     
-    :new: If True, ! used for comments, else () can also be used. False should be avoided, only for old PCIM models.  
+    :name: Name of the model
+    :new: If True, ! used for comments, else () can also be used. False should be avoided, only for old PCIM models.
     :hist: If True, a model with calculations of historic value is also created
     :xmodel: The model class used for creating model the model instance. Can be used to create models with model subclasses
     :finished: If True, the model exploder is not used.
     :straight: If True, the formula sequence in the model will be used.
-    :funks: A list of user defined funktions used in the model 
+    :funks: A list of user defined funktions used in the model
 
 
 
@@ -6062,7 +6065,7 @@ def create_model(navn, hist=0, name='', new=True, finished=False, xmodel=model, 
 
 
 def get_a_value(df, per, var, lag=0):
-    ''' returns a value for row=p+lag, column = var 
+    ''' returns a value for row=p+lag, column = var
 
     to take care of non additive row index'''
 
@@ -6070,7 +6073,7 @@ def get_a_value(df, per, var, lag=0):
 
 
 def set_a_value(df, per, var, lag=0, value=np.nan):
-    ''' Sets a value for row=p+lag, column = var 
+    ''' Sets a value for row=p+lag, column = var
 
     to take care of non additive row index'''
 
@@ -6176,7 +6179,7 @@ def randomdf(df, row=False, col=False, same=False, ran=False, cpre='C', rpre='R'
 
 def join_name_lag(df):
     '''creates a new dataframe where  the name and lag from multiindex is joined
-    as input a dataframe where name and lag are two levels in multiindex 
+    as input a dataframe where name and lag are two levels in multiindex
     '''
 
     def xl(x): return f"({x[1]})" if x[1] else ""
@@ -6193,7 +6196,7 @@ def timer_old(input='test', show=True, short=False):
     does not catch exceptrions use model.timer
 
     A timer context manager, implemented using a
-    generator function. This one will report time even if an exception occurs"""    
+    generator function. This one will report time even if an exception occurs"""
 
     Parameters
     ----------
@@ -6231,11 +6234,11 @@ def timer_old(input='test', show=True, short=False):
 
 if __name__ == '__main__':
 
-#%%  test 
+#%%  test
     smallmodel = '''
-frml <> a = c + b $ 
-frml <> d1 = x + 3 * a(-1)+ c **2 +a  $ 
-frml <> d3 = x + 3 * a(-1)+c **3 $  
+frml <> a = c + b $
+frml <> d1 = x + 3 * a(-1)+ c **2 +a  $
+frml <> d3 = x + 3 * a(-1)+c **3 $
 Frml <> x = 0.5 * c +a$'''
     des = {'A': 'Bruttonationalprodukt i faste  priser',
            'X': 'Eksport <æøåÆØÅ>;',
@@ -6246,7 +6249,7 @@ Frml <> x = 0.5 * c +a$'''
          'PPP': [0.4, 0., 0.4]})
     df2 = df.copy()
     df2.loc[:,'C'] = [5, 10, 20]
-    
+
     xx = mmodel(df)
     yy = mmodel(df2)
     m2model = model.from_eq('x = 42')
@@ -6273,4 +6276,3 @@ Frml <> x = 0.5 * c +a$'''
     newmodel3 = mmodel.eqflip('''\
                                 D1 C
                                 A B'''  )
-    

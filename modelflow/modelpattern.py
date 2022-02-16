@@ -2,58 +2,62 @@
 """
 Created on Mon Sep 02 19:32:22 2013
 
-This module defines a number of pattern used in PYFS. 
-If a new function is intruduced in the model definition language it should added to the 
-function names in funkname 
+This module defines a number of patterns used in PYFS (what is PYFS?)
 
-All functions in the module modeluserfunk will be added to the language and incorporated in the Business 
-Logic language 
+If a new function is introduced in the model definition language it should be added to the
+function names in funkname. (Can we call this funcname in stead? English?)
+
+All functions in the module modeluserfunk (Same her. modeluserfunc) will be added to the language and incorporated in the Business
+Logic language
 
 @author: Ib
 """
-import re 
-import inspect 
+
+# Where do these libraries/functions come from? Where are they defined?:
+
+import re
+import inspect
 from collections import namedtuple
 from collections import defaultdict
 
 
 import modelBLfunk
 
-# names and lags 
+# names and lags
 namepat_ng  = r'(?:[A-Za-z_{][A-Za-z_{}0-9]*)'     # a name non grouped
 namepat     = r'(' + namepat_ng + ')' # a name  grouped
 lagpat      = r'(?:\(([+-][0-9]+)\))?'
 
-# comments 
-commentchar = '£' 
+# comments
+commentchar = '£'
 commentpat  = r'('+commentchar+r'.*)'
 
-try: # import the names of functions defined in modeluserfunk 
+try: # import the names of functions defined in modeluserfunk
     import modeluserfunk
     userfunk = [o.upper() for o,t in inspect.getmembers(modeluserfunk) if not o.startswith('__')]
-except: 
+except:
     userfunk = []
 
 BLfunk = [o.upper() for o,t in inspect.getmembers(modelBLfunk) if not o.startswith('__')  ]
-classfunk = modelBLfunk.classfunk   
-# Operators 
+classfunk = modelBLfunk.classfunk
+# Operators
 funkname    = 'DLOG SUM_EXCEL DIFF MIN MAX FLOAT NORM.CDF NORM.PPF ABS MOVAVG PCT_GROWTH'.split() + BLfunk+ userfunk + classfunk
 funkname2   = [i+r'(?=\()' for i in funkname]               # a function is followed by a (
-opname      = r'\*\*  != >=  <=  ==  [=+-/*@|()$><,.\]\[]'.split() # list of ordinary operators 
+opname      = r'\*\*  != >=  <=  ==  [=+-/*@|()$><,.\]\[]'.split() # list of ordinary operators
 oppat       = '('+'|'.join(['(?:' + i + ')' for i in funkname2+opname])+')'
 
-# Numbers 
+# Numbers
 numpat      = r'((?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]\d+)?)'
 
-# Formulars 
+# Formulars
 dollarpat   = r'([$]'
 upat        = r'([^$]*\$)'          # resten frem til $
 frmlpat     = r'(FRML [^$]*\$)'     # A FORMULAR for splitting a model in formulars
 optionpat   = r'(?:[<][^>]*[>])?'   # 0 eller en optioner omsluttet af <>
 
-#White space 
-ws          = r'[\s]+'              # 0 or more white spaces 
-ws2         = r'[\s]*'              # 1 or more white spaces 
+#White space
+ws          = r'[\s]+'              # 0 or more white spaces
+ws2         = r'[\s]*'              # 1 or more white spaces
 
 splitpat    = namepat + ws + \
     '(' + namepat_ng + '?' + ws2 + optionpat + ')' + ws + upat  # Splits a formular
@@ -73,7 +77,7 @@ def udtrykre(funks=[]):
     funkname    = 'DLOG SUM_EXCEL DIFF MIN MAX FLOAT NORM.CDF NORM.PPF ABS MOVAVG PCT_GROWTH'.split() + BLfunk+ userfunk + classfunk + newfunks
 #    print(funkname)
     funkname2   = [i+r'(?=\()' for i in funkname]               # a function is followed by a (
-    opname      = r'\*\*  != >=  <=  ==  [=+-/*@|()$><,.\]\[]'.split() # list of ordinary operators 
+    opname      = r'\*\*  != >=  <=  ==  [=+-/*@|()$><,.\]\[]'.split() # list of ordinary operators
     oppat       = '('+'|'.join(['(?:' + i + ')' for i in funkname2+opname])+')'
    # udtrykpat    =  commentpat + '|' + numpat + '|' + oppat + '|' + namepat + lagpat
     udtrykpat    =   numpat + '|' + oppat + '|' + namepat + lagpat
@@ -83,20 +87,20 @@ def udtrykre(funks=[]):
 
 
 def find_frml(equations):
-   ''' Takes at modeltext and returns a list with where each element is 
-   a string starting  with FRML and ending with $ 
-   It do not check if it is a valid FRML statement '''
+   ''' Takes at modeltext and returns a list with where each element is
+   a string starting  with FRML and ending with $
+   It does not check if it is a valid FRML statement '''
    return re.findall(frmlpat, equations, flags=re.IGNORECASE)
 
 
 def split_frml(frml):
     ''' Splits a string with a frml into a tuple with 4 parts:
-    
-    0. The unsplit frml statement    
-    1. FRML     
-    2. <Frml name>    
+
+    0. The unsplit frml statement
+    1. FRML
+    2. <Frml name>
     3. <the frml expression>
-    
+
     '''
     m = re.search(splitpat, frml)
     if m:
@@ -106,24 +110,24 @@ def split_frml(frml):
 
 
 def find_statements(a_model):
-    ''' splits a modeltest into comments and statements   
-    
-    * a *comment* starts with ! and ends at lineend     
-    * a *statement* starts with a name and ends with a $ all characters between are considerd part of the statement
-    
-    The statement is not chekked for meaningfulness         
-    returns a list of tuppels (comment,command,<rest of statement>)
+    ''' splits a modeltest into comments and statements
+
+    * a *comment* starts with ! and ends at lineend
+    * a *statement* starts with a name and ends with a $ all characters between are considered part of the statement
+
+    The statement is not checked for meaningfulness
+    returns a list of tupels (comment,command,<rest of statement>)
     '''
     return(re.findall(statementpat, a_model))
-    
+
 def model_parse(equations,funks=[]):
-    '''Takes a model returns a list of tupels. Each tupel contains:
-        :the compleete formular: 
+    '''Takes a model returns a list of tupels. Each tuple contains:
+        :the complete formula:
         :FRML:
-        :formular name:
+        :formula name:
         :the expression:
-        :list of terms from the expression:  
-            
+        :list of terms from the expression:
+
      The purpose of this function is to make model analysis faster. this is 20 times faster than looping over espressions in a model
      '''
     fatoms = namedtuple('fatoms', 'whole, frml ,frmlname, expression')
@@ -134,9 +138,9 @@ def model_parse(equations,funks=[]):
 
 
 def list_extract(equations,silent=True):
-    ''' creates lists used in a model 
-    
-        returns a dictonary with the lists
+    ''' creates lists used in a model
+
+        returns a dictionary with the lists
         if a list is defined several times, the first definition is used'''
     liste_dict = defaultdict(
         list)  # opretter modellens lister - skal laves til en klasse
@@ -145,7 +149,7 @@ def list_extract(equations,silent=True):
             stripvalue = value.replace('\n', '').upper()
             list_name, list_value = stripvalue[0:-1].split('=')
             if list_name.strip() in liste_dict:
-                if not silent: 
+                if not silent:
                     print('Warning ', list_name.strip(), 'Defined 2 times')
                     print('Use     ', list_name.strip(), liste_dict[list_name.strip()])
             else:
@@ -158,7 +162,7 @@ def list_extract(equations,silent=True):
     return liste_dict
 
 def check_syntax_model(equations,test=True):
-    ''' cheks if equations have syntax errors by calling the python compile.parse '''
+    ''' checks if equations have syntax errors by calling the python compile.parse '''
     import ast
     error=True
     try:
@@ -166,20 +170,20 @@ def check_syntax_model(equations,test=True):
             a, fr, n, udtryk = split_frml(frml)
             ast.parse(re.sub(r'\n','',re.sub(' ','',udtryk[:-1])))
     except SyntaxError:
-        print('Syntax error in:',frml)            
-        error=False 
+        print('Syntax error in:',frml)
+        error=False
         assert  test
     return error
-    
+
 
 def udtryk_parse(udtryk,funks=[]):
-    '''returns a list of terms from an expression ie: lhs=rhs $ 
+    '''returns a list of terms from an expression ie: lhs=rhs $
     or just an expression like x+b '''
     #nterm = namedtuple('nterm', ['comment', 'number', 'op', 'var', 'lag'])
-    temp=re.sub(r'\s+', '', udtryk.upper()) # remove all blanks 
-    xxx = udtrykre(funks=funks).findall(temp) # the compiled re pattern is importet from pattern 
+    temp=re.sub(r'\s+', '', udtryk.upper()) # remove all blanks
+    xxx = udtrykre(funks=funks).findall(temp) # the compiled re pattern is importet from pattern
  # her laver vi det til en named tuple
-    ibh = [nterm._make(t) for t in xxx]   # Easier to remember by using named tupels . 
+    ibh = [nterm._make(t) for t in xxx]   # Easier to remember by using named tupels .
     return ibh
 
 def kw_frml_name(frml_name0, kw,default=None):
@@ -196,7 +200,7 @@ def kw_frml_name(frml_name0, kw,default=None):
                 else:
                     out = 1
     if type(out)  == type(None) and type(default)!=type(None):
-        out=default 
+        out=default
     return out
 
 def f1():
@@ -208,4 +212,3 @@ def f2():
 if __name__ == '__main__' and 1 :
     model_parse('frml <> a= b+c(-1)+3.444 $')
     model_parse('frml <> a+b+b+b=x(-1)+y(-33) $ frml <> a= b+c(-1)+3.444 $')
- 
