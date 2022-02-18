@@ -30,7 +30,7 @@ from tqdm import tqdm
 
 
 from modelclass import model 
-import modelmf 
+#import modelmf 
 import modelmanipulation as mp 
 
 import modelnormalize as nz

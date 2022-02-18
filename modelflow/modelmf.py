@@ -10,7 +10,7 @@ Created on Sat March 2019
 
 import pandas as pd
 from collections import namedtuple
-import inspect 
+#import inspect 
 
 
 

@@ -14,7 +14,7 @@ The example is based on a mean variance model for Indonesian Rupia running in Ex
 
 import numpy as np
 import pandas as pd
-from cvxopt         import matrix,  spdiag
+from cvxopt         import matrix,  spdiag #spdiag not used
 from cvxopt.solvers import qp    ,  options
 
 """

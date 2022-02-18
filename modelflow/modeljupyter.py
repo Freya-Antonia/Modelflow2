@@ -12,8 +12,8 @@ import matplotlib.pylab  as plt
 import seaborn as sns
 import os
 import webbrowser as wb
-import sys
-import re
+#import sys
+#import re
 import fnmatch 
 import matplotlib.ticker as ticker
 

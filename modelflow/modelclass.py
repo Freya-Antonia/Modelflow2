@@ -4,16 +4,13 @@ Created on Mon Sep 02 19:41:11 2013
 
 This module creates model class instances.
 
-
-
 @author: Ib
 """
 
-#We should clean up libraries. So we know what is used where.
 
 import model_Excel as me
 from pathlib import Path
-from io import StringIO
+#from io import StringIO
 import json
 from collections import defaultdict, namedtuple
 from itertools import groupby, chain, zip_longest
